@@ -16,6 +16,13 @@ export default function Home() {
     { id: 12, name: 'NovaLite 10,000mAh Powerbank', price: 39.99, rating: 4.6, reviews: 540, category: 'Accessories', image: 'https://images.unsplash.com/photo-1609091839311-d5365f47d8eb?q=80&w=600&auto=format&fit=crop' },
   ];
 
+  const newArrivals = [
+    { id: 5, name: 'Lumina Smart Ring Gen 2', price: 199.99, rating: 4.5, reviews: 32, category: 'Wearables', image: 'https://images.unsplash.com/photo-1599814474771-36f78fec1db7?q=80&w=600&auto=format&fit=crop' },
+    { id: 6, name: 'Vortex Mechanical Keyboard', price: 129.50, rating: 4.9, reviews: 156, category: 'Accessories', image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?q=80&w=600&auto=format&fit=crop' },
+    { id: 7, name: 'Aero 8K Drone w/ Controller', price: 899.00, rating: 4.8, reviews: 41, category: 'Cameras', image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=600&auto=format&fit=crop' },
+    { id: 8, name: 'SoundScape Desk Speakers', price: 249.99, rating: 4.7, reviews: 89, category: 'Audio', image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=600&auto=format&fit=crop' },
+  ];
+
   const categories = [
     { name: 'Audio', icon: Headphones, count: '1,240 items', color: 'bg-blue-100 text-blue-600' },
     { name: 'Displays', icon: Monitor, count: '342 items', color: 'bg-purple-100 text-purple-600' },
@@ -84,6 +91,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Brands */}
+      <section className="py-12 bg-white border border-[var(--border-color)]">
+        <div className="container">
+          <p className="text-center text-sm font-semibold text-muted uppercase tracking-wider mb-8">Trusted by global leading brands</p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            {['Apple', 'Samsung', 'Sony', 'Bose', 'DJI', 'Logitech'].map((brand, i) => (
+              <div key={i} className="text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-tighter">
+                {brand}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Modern Categories */}
       <section className="py-14 bg-white border border-[var(--border-color)]">
         <div className="container">
@@ -142,6 +163,54 @@ export default function Home() {
                   <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
                     <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
                     <button className="w-10 h-10 rounded-full bg-[var(--bg-color)] flex items-center justify-center hover:bg-[var(--primary-color)] hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
+                      <ShoppingBag size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals Grid */}
+      <section className="py-20 bg-white border border-[var(--border-color)]">
+        <div className="container">
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider mb-3 rounded-full">
+                Just Dropped
+              </div>
+              <h2 className="mb-2 text-3xl font-bold">New Arrivals</h2>
+              <p className="text-muted">Discover the latest cutting-edge tech added this week.</p>
+            </div>
+            <Link href="/products?sort=newest" className="text-[var(--primary-color)] font-medium hover:underline hidden sm:block">View All New Drops</Link>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {newArrivals.map((product) => (
+              <div key={product.id} className="bg-[var(--bg-color)] rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="relative h-64 overflow-hidden bg-white p-4 flex items-center justify-center">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-[var(--secondary-color)] text-white text-xs font-bold rounded-full shadow-sm">
+                      New
+                    </span>
+                  </div>
+                </div>
+                <div className="p-8 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-base font-bold line-clamp-2 leading-snug">{product.name}</h3>
+                  </div>
+                  <div className="flex items-center gap-1 mb-4">
+                    <Star size={14} fill="#fbbf24" stroke="#fbbf24" />
+                    <span className="text-sm font-bold">{product.rating}</span>
+                    <span className="text-xs text-muted">({product.reviews})</span>
+                  </div>
+                  
+                  <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
+                    <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
+                    <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-[var(--primary-color)] hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
                       <ShoppingBag size={18} />
                     </button>
                   </div>
@@ -227,6 +296,50 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* App Download CTA */}
+      <section className="py-0 relative overflow-hidden rounded-3xl bg-[var(--primary-color)] mx-4 md:mx-12 my-12 shadow-2xl">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-color)] via-[var(--primary-color)] to-transparent opacity-90"></div>
+        <div className="container relative z-10 py-16 md:py-24 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="max-w-xl text-white">
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white leading-tight">Shop Faster With The Lumina App.</h2>
+            <p className="text-blue-100 text-lg mb-8">Get exclusive app-only discounts, real-time tracking, and early access to drops. Available on iOS and Android.</p>
+            <div className="flex flex-wrap gap-4">
+              <button className="bg-black text-white px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-gray-800 transition-colors">
+                <Smartphone size={24} />
+                <div className="text-left">
+                  <div className="text-[10px] uppercase font-semibold text-gray-400">Download on the</div>
+                  <div className="text-sm leading-tight">App Store</div>
+                </div>
+              </button>
+              <button className="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-gray-100 transition-colors">
+                <Smartphone size={24} />
+                <div className="text-left">
+                  <div className="text-[10px] uppercase font-semibold text-gray-500">GET IT ON</div>
+                  <div className="text-sm leading-tight">Google Play</div>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div className="hidden lg:block relative w-64 h-[400px]">
+            {/* Abstract mock phone visual */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-[500px] bg-white rounded-[3rem] border-8 border-gray-900 shadow-2xl overflow-hidden transform rotate-12">
+              <div className="w-full h-full bg-gray-100 relative">
+                <div className="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-2xl w-1/2 mx-auto"></div>
+                <div className="p-4 pt-10">
+                  <div className="h-32 bg-blue-100 rounded-xl mb-4"></div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="h-24 bg-gray-200 rounded-xl"></div>
+                    <div className="h-24 bg-gray-200 rounded-xl"></div>
+                  </div>
+                  <div className="h-10 bg-[var(--primary-color)] rounded-full mb-4 w-3/4"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

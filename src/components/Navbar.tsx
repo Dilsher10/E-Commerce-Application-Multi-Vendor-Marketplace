@@ -16,7 +16,7 @@ export default function Navbar() {
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <div className="flex flex-col relative z-50">
+    <div className="flex flex-col relative z-50 sticky top-0">
       {/* Topbar: Language, Currency, Quick Links */}
       <div className="bg-[var(--secondary-color)] text-white text-xs py-2 hidden md:block">
         <div className="container flex justify-between items-center">
@@ -37,7 +37,7 @@ export default function Navbar() {
       </div>
 
       {/* Main Header */}
-      <header className="bg-white border-b border-[var(--border-color)] shadow-sm sticky top-0 z-40">
+      <header className="bg-white/85 backdrop-blur-xl border-b border-[var(--border-color)] shadow-sm relative z-40">
         <div className="container py-4">
           <div className="flex items-center justify-between gap-6 lg:gap-12">
             
@@ -107,7 +107,7 @@ export default function Navbar() {
       </header>
 
       {/* Bottom Navigation (Mega Menu Trigger Area) */}
-      <div className="bg-white border-b border-[var(--border-color)] hidden md:block">
+      <div className="bg-white/95 backdrop-blur-md border-b border-[var(--border-color)] hidden md:block">
         <div className="container flex items-center gap-8 py-3">
           <button className="flex items-center gap-2 bg-[var(--primary-color)] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[var(--primary-hover)] transition-colors">
             <Menu size={18} /> All Categories
