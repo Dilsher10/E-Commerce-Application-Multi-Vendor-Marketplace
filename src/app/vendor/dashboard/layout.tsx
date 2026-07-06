@@ -1,11 +1,23 @@
 import Link from 'next/link';
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Bell, Store, BarChart, Wallet } from 'lucide-react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { LayoutDashboard, Package, ShoppingCart, Settings, Bell, Store, BarChart, Wallet } from 'lucide-react';
+import { verifyToken } from '@/lib/auth';
+import VendorLogoutButton from '@/components/VendorLogoutButton';
 
-export default function VendorLayout({
+export default async function VendorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
+  const session = token ? verifyToken(token) : null;
+
+  if (!session || typeof session === 'string' || session.role !== 'vendor') {
+    redirect('/auth/login');
+  }
+
   return (
     <div className="flex h-screen bg-[var(--bg-color)] overflow-hidden">
       {/* Vendor Sidebar */}
@@ -64,10 +76,7 @@ export default function VendorLayout({
         </nav>
         
         <div className="p-4 border-t border-[var(--border-color)]">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--danger)] hover:bg-red-50 w-full transition-colors font-medium">
-            <LogOut size={20} />
-            Log Out
-          </button>
+          <VendorLogoutButton />
         </div>
       </aside>
 
