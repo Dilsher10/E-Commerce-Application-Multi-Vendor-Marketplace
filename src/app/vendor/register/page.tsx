@@ -10,12 +10,15 @@ export default function VendorRegistration() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   async function handleRegister(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formElement = event.currentTarget;
     setLoading(true);
     setError('');
-    const formData = new FormData(event.currentTarget);
+    setSuccess('');
+    const formData = new FormData(formElement);
 
     if (password !== formData.get('confirmPassword')) {
       setError('Passwords do not match');
@@ -48,9 +51,14 @@ export default function VendorRegistration() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Registration failed');
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      window.location.href = '/vendor/dashboard';
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setSuccess('Registration submitted. You can sign in after an admin approves your vendor account.');
+      formElement.reset();
+      setName('');
+      setStoreName('');
+      setEmail('');
+      setPassword('');
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : 'Registration failed');
     } finally {
@@ -66,6 +74,12 @@ export default function VendorRegistration() {
         {error && (
           <div className="mb-4 p-3 rounded bg-danger" style={{ color: 'white' }}>
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-4 p-3 rounded bg-green-600" style={{ color: 'white' }}>
+            {success}
           </div>
         )}
 

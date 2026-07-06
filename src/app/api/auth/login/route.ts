@@ -23,6 +23,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    if (user.role === 'vendor' && !user.vendorDetails?.isApproved) {
+      return NextResponse.json(
+        { error: 'Your vendor account is awaiting admin approval' },
+        { status: 403 }
+      );
+    }
+
     const token = signToken({ id: user._id, role: user.role });
 
     const response = NextResponse.json({

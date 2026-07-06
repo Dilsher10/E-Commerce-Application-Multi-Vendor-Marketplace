@@ -60,7 +60,9 @@ export async function POST(req: NextRequest) {
 
     const newUser = await User.create(userPayload);
 
-    const token = signToken({ id: newUser._id, role: newUser.role });
+    const token = newUser.role === 'vendor'
+      ? null
+      : signToken({ id: newUser._id, role: newUser.role });
 
     const response = NextResponse.json({
       message: 'Registration successful',
@@ -73,13 +75,23 @@ export async function POST(req: NextRequest) {
       }
     }, { status: 201 });
 
-    response.cookies.set('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    if (token) {
+      response.cookies.set('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7,
+        path: '/',
+      });
+    } else {
+      response.cookies.set('auth_token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 0,
+        path: '/',
+      });
+    }
 
     return response;
 
