@@ -230,6 +230,7 @@ main {
 }
 
 
-.approve-vendor-button{
+.approve-vendor-button, .add-new-user-button, .unban-user-button{
   background: #10B981;
 }
+

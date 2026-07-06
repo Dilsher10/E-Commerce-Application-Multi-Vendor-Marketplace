@@ -13,7 +13,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please provide email and password' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email })
+      .select('+password accountStatus vendorDetails')
+      .lean();
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }

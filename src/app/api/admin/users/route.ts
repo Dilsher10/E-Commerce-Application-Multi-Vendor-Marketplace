@@ -3,6 +3,7 @@ import dbConnect from '@/lib/db';
 import { User } from '@/models/User';
 import { getUserFromRequest } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
 export async function GET(req: NextRequest) {
   try {
@@ -51,11 +52,20 @@ export async function PATCH(req: NextRequest) {
         { new: true, runValidators: true }
       ).select('-password');
     } else if (action === 'toggleBan') {
-      const existingUser = await User.findById(userId);
+      const objectId = new mongoose.Types.ObjectId(userId);
+      const existingUser = await User.collection.findOne({ _id: objectId });
       if (!existingUser) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      existingUser.accountStatus = existingUser.accountStatus === 'banned' ? 'active' : 'banned';
-      await existingUser.save();
-      updatedUser = await User.findById(userId).select('-password');
+      const nextStatus = existingUser.accountStatus === 'banned' ? 'active' : 'banned';
+      await User.collection.updateOne(
+        { _id: objectId },
+        { $set: { accountStatus: nextStatus } }
+      );
+      const savedUser = await User.collection.findOne({ _id: objectId });
+      if (savedUser) {
+        const { password: _password, ...safeUser } = savedUser;
+        void _password;
+        updatedUser = safeUser;
+      }
     } else {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }

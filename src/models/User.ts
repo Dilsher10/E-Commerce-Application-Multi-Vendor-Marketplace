@@ -49,5 +49,12 @@ const UserSchema: Schema<IUser> = new Schema(
   { timestamps: true }
 );
 
+const existingUserModel = mongoose.models.User as Model<IUser> | undefined;
+
+// Keep the cached development model in sync when fields are added during HMR.
+if (existingUserModel) {
+  existingUserModel.schema.add(UserSchema.obj);
+}
+
 export const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+  existingUserModel || mongoose.model<IUser>('User', UserSchema);

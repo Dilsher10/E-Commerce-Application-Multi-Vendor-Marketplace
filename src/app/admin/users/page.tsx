@@ -194,7 +194,7 @@ export default function AdminUsers() {
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Users</h1>
           <p className="text-muted mt-1 text-sm">Manage customers, vendors, and administrative accounts.</p>
         </div>
-        <button onClick={openAddModal} className="flex items-center gap-2 bg-[var(--primary-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors shadow-sm">
+        <button onClick={openAddModal} className="add-new-user-button flex items-center gap-2 bg-[var(--primary-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors shadow-sm">
           <UserPlus size={18} />
           Add New User
         </button>
@@ -301,7 +301,7 @@ export default function AdminUsers() {
             ) : (
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => setModal(null)} disabled={saving} className="btn btn-secondary">Cancel</button>
-                <button type="button" onClick={() => void confirmAction()} disabled={saving} className={`${modal.action === 'approve' ? 'approve-vendor-button ' : ''}${modal.action === 'approve' || modal.user.status === 'Banned' ? 'btn bg-green-600 text-white hover:bg-green-700' : 'btn btn-danger'}`}>{saving ? 'Please wait...' : modal.action === 'approve' ? 'Approve Vendor' : modal.action === 'delete' ? 'Delete Account' : modal.user.status === 'Banned' ? 'Unban User' : 'Ban User'}</button>
+                <button type="button" onClick={() => void confirmAction()} disabled={saving} className={`${modal.action === 'approve' ? 'approve-vendor-button ' : ''}${modal.action === 'toggleBan' && modal.user.status === 'Banned' ? 'unban-user-button ' : ''}${modal.action === 'approve' || modal.user.status === 'Banned' ? 'btn bg-green-600 text-white hover:bg-green-700' : 'btn btn-danger'}`}>{saving ? 'Please wait...' : modal.action === 'approve' ? 'Approve Vendor' : modal.action === 'delete' ? 'Delete Account' : modal.user.status === 'Banned' ? 'Unban User' : 'Ban User'}</button>
               </div>
             )}
           </div>
