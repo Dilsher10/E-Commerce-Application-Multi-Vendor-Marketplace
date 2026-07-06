@@ -3,62 +3,8 @@ import { Store, CheckCircle2, ArrowRight, ShieldCheck, TrendingUp, Globe } from 
 
 export default function VendorRegistration() {
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-[var(--bg-color)] flex flex-col md:flex-row animate-fade-in">
-      
-      {/* Left Side: Value Proposition */}
-      <div className="w-full md:w-1/2 bg-[var(--secondary-color)] text-white p-8 md:p-16 lg:p-24 flex flex-col justify-center relative overflow-hidden">
-        {/* Background Graphic */}
-        <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(circle at top right, var(--primary-color) 0%, transparent 60%)' }}></div>
-        
-        <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2 group mb-12">
-            <div className="w-10 h-10 rounded-xl bg-[var(--primary-color)] flex items-center justify-center shadow-sm">
-              <Store size={22} color="white" />
-            </div>
-            <span className="text-2xl font-extrabold tracking-tight">LUMINA</span>
-          </Link>
-          
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-            Scale your business globally with Lumina.
-          </h1>
-          <p className="text-lg text-gray-300 mb-10 max-w-md">
-            Join thousands of verified vendors who are reaching millions of active buyers. Set up your store in minutes and start selling today.
-          </p>
-          
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-[var(--primary-color)]">
-                <Globe size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-lg">Global Reach</h3>
-                <p className="text-gray-400 text-sm">Access customers across 150+ countries with localized payments.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-[var(--primary-color)]">
-                <TrendingUp size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-lg">Powerful Analytics</h3>
-                <p className="text-gray-400 text-sm">Track sales, monitor traffic, and optimize conversions in real-time.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-[var(--primary-color)]">
-                <ShieldCheck size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-white text-lg">Secure Payments</h3>
-                <p className="text-gray-400 text-sm">Guaranteed payouts and fraud protection for absolute peace of mind.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side: Registration Form */}
-      <div className="w-full md:w-1/2 p-8 md:p-16 lg:p-24 flex items-center justify-center bg-white relative">
+    <div className="min-h-[calc(100vh-140px)] bg-[var(--bg-color)] animate-fade-in">
+      <div className="w-full p-8 md:p-16 lg:p-24 flex items-center justify-center bg-white relative">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h2 className="text-3xl font-extrabold text-[var(--text-main)] mb-2">Apply as a Vendor</h2>
