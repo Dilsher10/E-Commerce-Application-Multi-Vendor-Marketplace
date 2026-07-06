@@ -7,7 +7,22 @@ import { signToken } from '@/lib/auth';
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
-    const { name, email, password, role, storeName, description } = await req.json();
+    const {
+      name,
+      email,
+      password,
+      role,
+      storeName,
+      description,
+      phone,
+      businessType,
+      category,
+      address,
+      city,
+      state,
+      postalCode,
+      country,
+    } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: 'Please provide all required fields' }, { status: 400 });
@@ -31,6 +46,14 @@ export async function POST(req: NextRequest) {
       userPayload.vendorDetails = {
         storeName,
         description: description || '',
+        phone: phone || '',
+        businessType: businessType || '',
+        category: category || '',
+        address: address || '',
+        city: city || '',
+        state: state || '',
+        postalCode: postalCode || '',
+        country: country || '',
         isApproved: false, // Admin approval required
       };
     }
@@ -39,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     const token = signToken({ id: newUser._id, role: newUser.role });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: 'Registration successful',
       token,
       user: {
@@ -49,6 +72,16 @@ export async function POST(req: NextRequest) {
         role: newUser.role
       }
     }, { status: 201 });
+
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    });
+
+    return response;
 
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });

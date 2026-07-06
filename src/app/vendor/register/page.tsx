@@ -1,78 +1,211 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import { Store, CheckCircle2, ArrowRight, ShieldCheck, TrendingUp, Globe } from 'lucide-react';
 
 export default function VendorRegistration() {
+  const [name, setName] = useState('');
+  const [storeName, setStoreName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleRegister(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+    const formData = new FormData(event.currentTarget);
+
+    if (password !== formData.get('confirmPassword')) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          storeName,
+          email,
+          password,
+          phone: formData.get('phone'),
+          businessType: formData.get('businessType'),
+          category: formData.get('category'),
+          description: formData.get('description'),
+          address: formData.get('address'),
+          city: formData.get('city'),
+          state: formData.get('state'),
+          postalCode: formData.get('postalCode'),
+          country: formData.get('country'),
+          role: 'vendor',
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Registration failed');
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = '/vendor/dashboard';
+    } catch (registerError) {
+      setError(registerError instanceof Error ? registerError.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-[var(--bg-color)] animate-fade-in">
-      <div className="w-full p-8 md:p-16 lg:p-24 flex items-center justify-center bg-white relative">
-        <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h2 className="text-3xl font-extrabold text-[var(--text-main)] mb-2">Apply as a Vendor</h2>
-            <p className="text-muted">Enter your business details to get started.</p>
+    <div className="container py-16 flex justify-center items-center" style={{ minHeight: '80vh' }}>
+      <div className="glass-card w-full max-w-md animate-fade-in">
+        <h2 className="text-center mb-6">Create a Vendor Account</h2>
+
+        {error && (
+          <div className="mb-4 p-3 rounded bg-danger" style={{ color: 'white' }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleRegister} className="flex flex-col gap-4">
+          <div>
+            <label className="block mb-2 text-muted">Full Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="John Doe"
+            />
           </div>
 
-          <form className="space-y-5" action="/vendor/dashboard">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-[var(--text-main)]">First Name</label>
-                <input type="text" placeholder="John" className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors" required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-[var(--text-main)]">Last Name</label>
-                <input type="text" placeholder="Doe" className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors" required />
-              </div>
+          <div>
+            <label className="block mb-2 text-muted">Store Name</label>
+            <input
+              type="text"
+              required
+              value={storeName}
+              onChange={(event) => setStoreName(event.target.value)}
+              placeholder="Tech Haven"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 text-muted">Business Email</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 text-muted">Phone Number</label>
+            <input name="phone" type="tel" autoComplete="tel" placeholder="+92 300 1234567" required />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 text-muted">Business Type</label>
+              <select name="businessType" defaultValue="" required>
+                <option value="" disabled>Select type</option>
+                <option value="Individual">Individual</option>
+                <option value="Sole Proprietorship">Sole Proprietorship</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Company">Company</option>
+              </select>
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-[var(--text-main)]">Business/Store Name</label>
-              <input type="text" placeholder="Tech Haven Ltd." className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors" required />
+            <div>
+              <label className="block mb-2 text-muted">Category</label>
+              <select name="category" defaultValue="" required>
+                <option value="" disabled>Select category</option>
+                <option value="Electronics & Tech">Electronics & Tech</option>
+                <option value="Fashion & Apparel">Fashion & Apparel</option>
+                <option value="Home & Living">Home & Living</option>
+                <option value="Health & Beauty">Health & Beauty</option>
+                <option value="Sports & Outdoors">Sports & Outdoors</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-[var(--text-main)]">Business Email</label>
-              <input type="email" placeholder="contact@techhaven.com" className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors" required />
+          <div>
+            <label className="block mb-2 text-muted">Store Description</label>
+            <textarea name="description" placeholder="Tell customers about your store and products" rows={3} required />
+          </div>
+
+          <div>
+            <label className="block mb-2 text-muted">Street Address</label>
+            <input name="address" type="text" autoComplete="street-address" placeholder="House, street, or building" required />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 text-muted">City</label>
+              <input name="city" type="text" autoComplete="address-level2" placeholder="Lahore" required />
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-[var(--text-main)]">Primary Category</label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors appearance-none cursor-pointer" required>
-                  <option value="" disabled selected>Select a category...</option>
-                  <option value="electronics">Electronics & Tech</option>
-                  <option value="fashion">Fashion & Apparel</option>
-                  <option value="home">Home & Living</option>
-                  <option value="health">Health & Beauty</option>
-                </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
+            <div>
+              <label className="block mb-2 text-muted">State / Province</label>
+              <input name="state" type="text" autoComplete="address-level1" placeholder="Punjab" required />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-[var(--text-main)]">Password</label>
-              <input type="password" placeholder="••••••••" className="w-full px-4 py-3 bg-gray-50 border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--primary-color)] focus:bg-white transition-colors" required />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 text-muted">Postal Code</label>
+              <input name="postalCode" type="text" autoComplete="postal-code" placeholder="54000" required />
             </div>
-
-            <div className="flex items-start gap-3 mt-6">
-              <input type="checkbox" id="terms" className="mt-1 w-4 h-4 rounded border-gray-300 text-[var(--primary-color)] focus:ring-[var(--primary-color)]" required />
-              <label htmlFor="terms" className="text-sm text-muted leading-relaxed">
-                I agree to the Lumina <a href="#" className="text-[var(--primary-color)] font-semibold hover:underline">Vendor Agreement</a> and <a href="#" className="text-[var(--primary-color)] font-semibold hover:underline">Privacy Policy</a>.
-              </label>
+            <div>
+              <label className="block mb-2 text-muted">Country</label>
+              <input name="country" type="text" autoComplete="country-name" placeholder="Pakistan" required />
             </div>
+          </div>
 
-            <button type="submit" className="w-full mt-6 bg-[var(--primary-color)] text-white py-3.5 rounded-xl font-bold text-base hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 group">
-              Create Vendor Account
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </form>
+          <div>
+            <label className="block mb-2 text-muted">Password</label>
+            <input
+              type="password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Minimum 8 characters"
+            />
+          </div>
 
-          <p className="mt-8 text-center text-sm text-muted font-medium">
-            Already have a vendor account? <Link href="/auth/login" className="text-[var(--primary-color)] font-bold hover:underline">Sign In</Link>
-          </p>
-        </div>
+          <div>
+            <label className="block mb-2 text-muted">Confirm Password</label>
+            <input name="confirmPassword" type="password" required minLength={8} placeholder="Enter password again" />
+          </div>
+
+          <label className="flex items-start gap-3 text-sm text-muted">
+            <input name="terms" type="checkbox" className="mt-1 w-auto" required />
+            <span>I agree to the Vendor Agreement and Privacy Policy.</span>
+          </label>
+
+          <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
+            {loading ? 'Creating account...' : 'Register as Vendor'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-muted">
+          Already have an account?{' '}
+          <Link href="/auth/login" style={{ color: 'var(--primary-color)' }}>
+            Sign In
+          </Link>
+        </p>
+
+        <p className="mt-2 text-center text-muted text-sm">
+          Shopping instead?{' '}
+          <Link href="/auth/register" style={{ color: 'var(--secondary-color)' }}>
+            Create a User Account
+          </Link>
+        </p>
       </div>
-
     </div>
   );
 }
