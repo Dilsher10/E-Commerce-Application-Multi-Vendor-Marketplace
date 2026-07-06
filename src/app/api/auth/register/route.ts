@@ -28,6 +28,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Please provide all required fields' }, { status: 400 });
     }
 
+    if (role === 'vendor') {
+      const requiredVendorFields = {
+        storeName,
+        phone,
+        businessType,
+        category,
+        address,
+        city,
+        state,
+        postalCode,
+        country,
+      };
+      const missingField = Object.entries(requiredVendorFields).find(([, value]) => !String(value || '').trim());
+      if (missingField) {
+        return NextResponse.json(
+          { error: `${missingField[0]} is required` },
+          { status: 400 }
+        );
+      }
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
@@ -44,16 +65,16 @@ export async function POST(req: NextRequest) {
 
     if (role === 'vendor' && storeName) {
       userPayload.vendorDetails = {
-        storeName,
-        description: description || '',
-        phone: phone || '',
-        businessType: businessType || '',
-        category: category || '',
-        address: address || '',
-        city: city || '',
-        state: state || '',
-        postalCode: postalCode || '',
-        country: country || '',
+        storeName: String(storeName).trim(),
+        description: String(description || '').trim(),
+        phone: String(phone).trim(),
+        businessType: String(businessType).trim(),
+        category: String(category).trim(),
+        address: String(address).trim(),
+        city: String(city).trim(),
+        state: String(state).trim(),
+        postalCode: String(postalCode).trim(),
+        country: String(country).trim(),
         isApproved: false, // Admin approval required
       };
     }

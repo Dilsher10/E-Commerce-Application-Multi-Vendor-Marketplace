@@ -38,7 +38,6 @@ export default function VendorRegistration() {
           phone: formData.get('phone'),
           businessType: formData.get('businessType'),
           category: formData.get('category'),
-          description: formData.get('description'),
           address: formData.get('address'),
           city: formData.get('city'),
           state: formData.get('state'),
