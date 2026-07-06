@@ -59,9 +59,9 @@ export default function VendorRegistration() {
   }
 
   return (
-    <div className="container py-16 flex justify-center items-center" style={{ minHeight: '80vh' }}>
-      <div className="glass-card w-full max-w-md animate-fade-in">
-        <h2 className="text-center mb-6">Create a Vendor Account</h2>
+    <div className="container py-16 flex justify-center items-center vendorForm" style={{ minHeight: '80vh' }}>
+      <div className="glass-card w-full animate-fade-in">
+        <h2 className="text-center mb-10">Create a Vendor Account</h2>
 
         {error && (
           <div className="mb-4 p-3 rounded bg-danger" style={{ color: 'white' }}>
@@ -70,45 +70,45 @@ export default function VendorRegistration() {
         )}
 
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
-          <div>
-            <label className="block mb-2 text-muted">Full Name</label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="John Doe"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted">Store Name</label>
-            <input
-              type="text"
-              required
-              value={storeName}
-              onChange={(event) => setStoreName(event.target.value)}
-              placeholder="Tech Haven"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted">Business Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted">Phone Number</label>
-            <input name="phone" type="tel" autoComplete="tel" placeholder="+92 300 1234567" required />
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 text-muted">Full Name</label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="John Doe"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-muted">Store Name</label>
+              <input
+                type="text"
+                required
+                value={storeName}
+                onChange={(event) => setStoreName(event.target.value)}
+                placeholder="Tech Haven"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-muted">Business Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-muted">Phone Number</label>
+              <input name="phone" type="tel" autoComplete="tel" placeholder="+92 300 1234567" required />
+            </div>
+
             <div>
               <label className="block mb-2 text-muted">Business Type</label>
               <select name="businessType" defaultValue="" required>
@@ -131,19 +131,12 @@ export default function VendorRegistration() {
                 <option value="Other">Other</option>
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className="block mb-2 text-muted">Store Description</label>
-            <textarea name="description" placeholder="Tell customers about your store and products" rows={3} required />
-          </div>
+            <div>
+              <label className="block mb-2 text-muted">Street Address</label>
+              <input name="address" type="text" autoComplete="street-address" placeholder="House, street, or building" required />
+            </div>
 
-          <div>
-            <label className="block mb-2 text-muted">Street Address</label>
-            <input name="address" type="text" autoComplete="street-address" placeholder="House, street, or building" required />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block mb-2 text-muted">City</label>
               <input name="city" type="text" autoComplete="address-level2" placeholder="Lahore" required />
@@ -152,9 +145,7 @@ export default function VendorRegistration() {
               <label className="block mb-2 text-muted">State / Province</label>
               <input name="state" type="text" autoComplete="address-level1" placeholder="Punjab" required />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block mb-2 text-muted">Postal Code</label>
               <input name="postalCode" type="text" autoComplete="postal-code" placeholder="54000" required />
@@ -163,27 +154,28 @@ export default function VendorRegistration() {
               <label className="block mb-2 text-muted">Country</label>
               <input name="country" type="text" autoComplete="country-name" placeholder="Pakistan" required />
             </div>
+
+            <div>
+              <label className="block mb-2 text-muted">Password</label>
+              <input
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Minimum 8 characters"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-muted">Confirm Password</label>
+              <input name="confirmPassword" type="password" required minLength={8} placeholder="Enter password again" />
+            </div>
+
           </div>
 
-          <div>
-            <label className="block mb-2 text-muted">Password</label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Minimum 8 characters"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted">Confirm Password</label>
-            <input name="confirmPassword" type="password" required minLength={8} placeholder="Enter password again" />
-          </div>
-
-          <label className="flex items-start gap-3 text-sm text-muted">
-            <input name="terms" type="checkbox" className="mt-1 w-auto" required />
+          <label className="flex items-start gap-3 text-sm text-muted checkbox">
+            <input name="terms" type="checkbox" required />
             <span>I agree to the Vendor Agreement and Privacy Policy.</span>
           </label>
 
@@ -192,19 +184,21 @@ export default function VendorRegistration() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-muted">
-          Already have an account?{' '}
-          <Link href="/auth/login" style={{ color: 'var(--primary-color)' }}>
-            Sign In
-          </Link>
-        </p>
+        <div className="flex justify-between pt-7">
+          <p className="text-muted">
+            Already have an account?{' '}
+            <Link href="/auth/login" style={{ color: 'var(--primary-color)' }}>
+              Sign In
+            </Link>
+          </p>
 
-        <p className="mt-2 text-center text-muted text-sm">
-          Shopping instead?{' '}
-          <Link href="/auth/register" style={{ color: 'var(--secondary-color)' }}>
-            Create a User Account
-          </Link>
-        </p>
+          <p className="text-muted text-sm">
+            Shopping instead?{' '}
+            <Link href="/auth/register" style={{ color: 'var(--secondary-color)' }}>
+              Create a User Account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

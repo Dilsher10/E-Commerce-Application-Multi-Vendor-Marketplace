@@ -69,9 +69,22 @@ input, textarea, select {
   width: 100%;
 }
 
+.checkbox{
+  margin: 10px 0;
+}
+
+.checkbox input{
+  width: unset;
+  margin-top: 3px;
+}
+
 input:focus, textarea:focus, select:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.vendorForm h2{
+  margin-bottom: 40px;
 }
 
 /* Glass Card */
