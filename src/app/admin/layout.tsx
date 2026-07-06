@@ -1,11 +1,23 @@
 import Link from 'next/link';
-import { LayoutDashboard, Package, Users, ShoppingCart, Settings, LogOut, Bell, Search, Store } from 'lucide-react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { LayoutDashboard, Package, Users, ShoppingCart, Settings, Bell, Search, Store } from 'lucide-react';
+import { verifyToken } from '@/lib/auth';
+import AdminLogoutButton from '@/components/AdminLogoutButton';
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
+  const session = token ? verifyToken(token) : null;
+
+  if (!session || typeof session === 'string' || session.role !== 'admin') {
+    redirect('/auth/login');
+  }
+
   return (
     <div className="flex h-screen bg-[var(--bg-color)] overflow-hidden">
       {/* Admin Sidebar */}
@@ -47,10 +59,7 @@ export default function AdminLayout({
         </nav>
         
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--danger)] hover:bg-white/5 w-full transition-colors font-medium">
-            <LogOut size={20} />
-            Sign Out
-          </button>
+          <AdminLogoutButton />
         </div>
       </aside>
 

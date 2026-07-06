@@ -17,10 +17,11 @@ export function verifyToken(token: string) {
 
 export function getUserFromRequest(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
+  const token = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : req.cookies.get('auth_token')?.value;
 
-  const token = authHeader.split(' ')[1];
+  if (!token) return null;
+
   return verifyToken(token);
 }

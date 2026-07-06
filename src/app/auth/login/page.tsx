@@ -27,7 +27,11 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      window.location.href = data.user.role === 'vendor' ? '/vendor/dashboard' : '/';
+      window.location.href = data.user.role === 'admin'
+        ? '/admin'
+        : data.user.role === 'vendor'
+          ? '/vendor/dashboard'
+          : '/';
     } catch (err: any) {
       setError(err.message);
     } finally {
