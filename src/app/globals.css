@@ -228,3 +228,8 @@ p {
 main {
   flex: 1;
 }
+
+
+.approve-vendor-button{
+  background: #10B981;
+}

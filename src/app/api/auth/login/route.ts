@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    if (user.accountStatus === 'banned') {
+      return NextResponse.json({ error: 'Your account has been suspended' }, { status: 403 });
+    }
+
     if (user.role === 'vendor' && !user.vendorDetails?.isApproved) {
       return NextResponse.json(
         { error: 'Your vendor account is awaiting admin approval' },

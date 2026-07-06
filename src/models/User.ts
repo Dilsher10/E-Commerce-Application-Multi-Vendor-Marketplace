@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: 'user' | 'vendor' | 'admin';
+  accountStatus: 'active' | 'banned';
   image?: string;
   vendorDetails?: {
     storeName: string;
@@ -29,6 +30,7 @@ const UserSchema: Schema<IUser> = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, select: false },
     role: { type: String, enum: ['user', 'vendor', 'admin'], default: 'user' },
+    accountStatus: { type: String, enum: ['active', 'banned'], default: 'active' },
     image: { type: String },
     vendorDetails: {
       storeName: { type: String },
