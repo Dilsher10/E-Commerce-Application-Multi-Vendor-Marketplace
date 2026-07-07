@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
-import { Eye, Filter, Package, Search, X } from 'lucide-react';
+import { Eye, Package } from 'lucide-react';
 import Link from 'next/link';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
 import { User } from '@/models/User';
+import AdminProductFilters from '@/components/AdminProductFilters';
 
 type AdminProduct = {
   _id: { toString(): string };
@@ -155,54 +156,14 @@ export default async function AdminProducts({
 
       <div className="bg-white rounded-2xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 sm:p-6 border-b border-[var(--border-color)] bg-gray-50/50">
-          <form action="/admin/products" className="grid grid-cols-1 lg:grid-cols-[1fr_180px_180px_220px_auto] gap-3">
-            <div className="relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-              <input
-                name="q"
-                type="search"
-                placeholder="Search title, category, or description..."
-                defaultValue={filters.q}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm outline-none transition-colors shadow-sm"
-              />
-            </div>
-
-            <select name="category" defaultValue={filters.category} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-
-            <select name="status" defaultValue={filters.status} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
-              <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="low-stock">Low Stock</option>
-              <option value="out-of-stock">Out of Stock</option>
-            </select>
-
-            <select name="vendor" defaultValue={filters.vendor} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
-              <option value="">All Vendors</option>
-              {vendors.map((vendor) => {
-                const vendorId = vendor._id.toString();
-                const vendorName = vendor.vendorDetails?.storeName || vendor.name || 'Unnamed vendor';
-                return <option key={vendorId} value={vendorId}>{vendorName}</option>;
-              })}
-            </select>
-
-            <div className="flex gap-2">
-              <button type="submit" className="btn bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] w-full lg:w-auto">
-                <Filter size={16} />
-                Filter
-              </button>
-              {hasFilters && (
-                <Link href="/admin/products" className="btn btn-secondary w-full lg:w-auto" title="Clear filters">
-                  <X size={16} />
-                </Link>
-              )}
-            </div>
-          </form>
+          <AdminProductFilters
+            categories={categories}
+            vendors={vendors.map((vendor) => ({
+              id: vendor._id.toString(),
+              name: vendor.vendorDetails?.storeName || vendor.name || 'Unnamed vendor',
+            }))}
+            initialFilters={filters}
+          />
         </div>
 
         {products.length === 0 ? (
