@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 const vendorNavItems = [
   { href: '/vendor/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/vendor/products', label: 'My Products', icon: Package },
-  { href: '/vendor/orders', label: 'Orders', icon: ShoppingCart, badge: '3' },
+  { href: '/vendor/orders', label: 'Orders', icon: ShoppingCart, badge: '' },
   { href: '/vendor/earnings', label: 'Earnings', icon: Wallet },
 ];
 
@@ -30,7 +30,7 @@ export default function VendorSidebarNav() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
-              isActive ? 'bg-[#2563eb] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
+              isActive ? 'active' : 'text-white/70 hover:text-white hover:bg-white/10'
             }`}
           >
             <Icon size={20} />

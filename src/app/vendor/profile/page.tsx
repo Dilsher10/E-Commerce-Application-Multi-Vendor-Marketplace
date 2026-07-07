@@ -55,7 +55,7 @@ export default async function VendorProfilePage() {
   const location = [details?.city, details?.state, details?.country].filter(Boolean).join(', ') || 'No location added';
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto">
+    <div className="animate-fade-in w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Profile</h1>
         <p className="text-muted mt-1 text-sm">Review your vendor account and store information.</p>

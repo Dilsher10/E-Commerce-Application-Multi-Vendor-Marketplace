@@ -63,13 +63,13 @@ export default async function VendorProductsPage() {
   const outOfStockCount = products.filter((product) => product.stock === 0).length;
 
   return (
-    <div className="animate-fade-in max-w-7xl mx-auto">
+    <div className="animate-fade-in w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">My Products</h1>
           <p className="text-muted mt-1 text-sm">Track the products published from your vendor account.</p>
         </div>
-        <Link href="/vendor/products/new" className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
+        <Link href="/vendor/products/new" className="btn vendorBtn w-full sm:w-auto">
           <PackagePlus size={18} />
           Add Product
         </Link>

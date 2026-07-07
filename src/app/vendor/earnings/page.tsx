@@ -67,7 +67,7 @@ export default async function VendorEarningsPage() {
   );
 
   return (
-    <div className="animate-fade-in max-w-7xl mx-auto">
+    <div className="animate-fade-in w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Earnings</h1>

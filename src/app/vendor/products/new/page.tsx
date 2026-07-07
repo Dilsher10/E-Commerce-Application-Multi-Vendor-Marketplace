@@ -44,7 +44,7 @@ export default function NewVendorProductPage() {
   }
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto">
+    <div className="animate-fade-in w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <Link href="/vendor/products" className="inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-[var(--accent-color)] mb-3">
@@ -54,9 +54,9 @@ export default function NewVendorProductPage() {
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Add Product</h1>
           <p className="text-muted mt-1 text-sm">Create a product listing for your storefront.</p>
         </div>
-        <button type="submit" form="add-product-form" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
+        <button type="submit" form="add-product-form" disabled={loading} className="btn vendorBtn w-full sm:w-auto">
           <PackagePlus size={18} />
-          {loading ? 'Adding...' : 'Add Product'}
+          {loading ? 'Submitting...' : 'Submit'}
         </button>
       </div>
 
@@ -135,16 +135,6 @@ export default function NewVendorProductPage() {
               onChange={(event) => setImageName(event.target.files?.[0]?.name || '')}
             />
           </label>
-
-          <div className="mt-6 flex flex-col gap-3">
-            <button type="submit" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full">
-              <PackagePlus size={18} />
-              {loading ? 'Adding...' : 'Add Product'}
-            </button>
-            <Link href="/vendor/products" className="btn btn-secondary w-full">
-              Cancel
-            </Link>
-          </div>
         </aside>
       </form>
     </div>

@@ -158,7 +158,7 @@ export default async function VendorDashboard() {
   });
 
   return (
-    <div className="animate-fade-in max-w-7xl mx-auto">
+    <div className="animate-fade-in w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Overview</h1>
@@ -195,7 +195,7 @@ export default async function VendorDashboard() {
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.bg}`}>
                 <stat.icon className={stat.color} size={24} />
               </div>
-              <div className="text-sm font-semibold px-2 py-1 rounded-md text-green-700 bg-green-50">
+              <div className="text-sm font-semibold px-2 py-1 rounded-md">
                 {stat.change}
               </div>
             </div>

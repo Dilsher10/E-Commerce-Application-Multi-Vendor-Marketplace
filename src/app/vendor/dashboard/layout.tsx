@@ -95,7 +95,7 @@ export default async function VendorLayout({
         </header>
 
         {/* Scrollable Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[var(--bg-color)]">
+        <main className="flex-1 p-4 sm:p-8 bg-[var(--bg-color)]">
           {children}
         </main>
       </div>
