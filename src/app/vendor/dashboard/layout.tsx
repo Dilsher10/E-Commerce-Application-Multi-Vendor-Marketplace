@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Settings, Bell, Store, BarChart, Wallet } from 'lucide-react';
+import { Bell, Store } from 'lucide-react';
 import { verifyToken } from '@/lib/auth';
 import VendorLogoutButton from '@/components/VendorLogoutButton';
+import VendorSidebarNav from '@/components/VendorSidebarNav';
 import dbConnect from '@/lib/db';
 import { User } from '@/models/User';
 
@@ -78,36 +79,7 @@ export default async function VendorLayout({
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 flex flex-col gap-1">
-          <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2 px-2">Store Management</p>
-          <Link href="/vendor/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--accent-color)] text-white font-medium shadow-sm transition-colors">
-            <LayoutDashboard size={20} />
-            Dashboard
-          </Link>
-          <Link href="/vendor/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
-            <Package size={20} />
-            My Products
-          </Link>
-          <Link href="/vendor/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
-            <ShoppingCart size={20} />
-            Orders
-            <span className="ml-auto bg-[var(--accent-color)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3</span>
-          </Link>
-          <Link href="/vendor/earnings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
-            <Wallet size={20} />
-            Earnings
-          </Link>
-          <Link href="/vendor/dashboard/analytics" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
-            <BarChart size={20} />
-            Analytics
-          </Link>
-          
-          <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2 px-2 mt-6">Settings</p>
-          <Link href="/vendor/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
-            <Settings size={20} />
-            Store Settings
-          </Link>
-        </nav>
+        <VendorSidebarNav />
         
         <div className="p-4 border-t border-[var(--border-color)]">
           <VendorLogoutButton />
