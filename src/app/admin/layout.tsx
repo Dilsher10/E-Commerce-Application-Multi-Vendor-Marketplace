@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LayoutDashboard, Package, Users, ShoppingCart, Settings, Bell, Search, Store } from 'lucide-react';
+import { Bell, Search, Store } from 'lucide-react';
 import { verifyToken } from '@/lib/auth';
 import AdminLogoutButton from '@/components/AdminLogoutButton';
+import AdminSidebarNav from '@/components/AdminSidebarNav';
 
 export default async function AdminLayout({
   children,
@@ -34,29 +35,7 @@ export default async function AdminLayout({
           <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded font-medium text-white/90">ADMIN</span>
         </div>
         
-        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--primary-color)] text-white font-medium transition-colors">
-            <LayoutDashboard size={20} />
-            Dashboard
-          </Link>
-          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors">
-            <Package size={20} />
-            Products
-          </Link>
-          <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors">
-            <ShoppingCart size={20} />
-            Orders
-            <span className="ml-auto bg-[var(--danger)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
-          </Link>
-          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors">
-            <Users size={20} />
-            Users
-          </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors mt-auto">
-            <Settings size={20} />
-            Settings
-          </Link>
-        </nav>
+        <AdminSidebarNav />
         
         <div className="p-4 border-t border-white/10">
           <AdminLogoutButton />
@@ -88,7 +67,11 @@ export default async function AdminLayout({
             </button>
             <div className="w-px h-6 bg-[var(--border-color)]"></div>
             <div className="flex items-center gap-3 cursor-pointer group">
-              <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563EB&color=fff" alt="Admin" className="w-9 h-9 rounded-full object-cover border-2 border-transparent group-hover:border-[var(--primary-color)] transition-all" />
+              <div
+                aria-label="Admin"
+                className="w-9 h-9 rounded-full bg-cover bg-center border-2 border-transparent group-hover:border-[var(--primary-color)] transition-all"
+                style={{ backgroundImage: 'url("https://ui-avatars.com/api/?name=Admin+User&background=2563EB&color=fff")' }}
+              />
               <div className="hidden md:block text-sm">
                 <p className="font-bold text-[var(--text-main)] leading-tight">Admin User</p>
                 <p className="text-xs text-muted">Superadmin</p>
