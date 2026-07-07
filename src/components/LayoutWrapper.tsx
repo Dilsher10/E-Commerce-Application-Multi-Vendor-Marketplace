@@ -10,6 +10,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   // Define routes that should NOT have the global Navbar and Footer
   const isVendorSellerRoute =
     pathname === '/vendor/dashboard' ||
+    pathname.startsWith('/vendor/profile') ||
     pathname.startsWith('/vendor/products') ||
     pathname.startsWith('/vendor/orders') ||
     pathname.startsWith('/vendor/earnings');

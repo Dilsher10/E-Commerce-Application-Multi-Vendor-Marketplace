@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { Bell, Search, Store } from 'lucide-react';
 import { verifyToken } from '@/lib/auth';
 import AdminLogoutButton from '@/components/AdminLogoutButton';
+import AdminHeaderProfileMenu from '@/components/AdminHeaderProfileMenu';
 import AdminSidebarNav from '@/components/AdminSidebarNav';
 
 export default async function AdminLayout({
@@ -66,17 +67,7 @@ export default async function AdminLayout({
               <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--danger)]"></span>
             </button>
             <div className="w-px h-6 bg-[var(--border-color)]"></div>
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div
-                aria-label="Admin"
-                className="w-9 h-9 rounded-full bg-cover bg-center border-2 border-transparent group-hover:border-[var(--primary-color)] transition-all"
-                style={{ backgroundImage: 'url("https://ui-avatars.com/api/?name=Admin+User&background=2563EB&color=fff")' }}
-              />
-              <div className="hidden md:block text-sm">
-                <p className="font-bold text-[var(--text-main)] leading-tight">Admin User</p>
-                <p className="text-xs text-muted">Superadmin</p>
-              </div>
-            </div>
+            <AdminHeaderProfileMenu />
           </div>
         </header>
 

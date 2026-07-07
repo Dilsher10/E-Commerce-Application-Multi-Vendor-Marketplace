@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { Bell, Store } from 'lucide-react';
 import { verifyToken } from '@/lib/auth';
 import VendorLogoutButton from '@/components/VendorLogoutButton';
+import VendorHeaderProfileMenu from '@/components/VendorHeaderProfileMenu';
 import VendorSidebarNav from '@/components/VendorSidebarNav';
 import dbConnect from '@/lib/db';
 import { User } from '@/models/User';
@@ -89,6 +90,7 @@ export default async function VendorLayout({
               <Bell size={22} />
               <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--danger)]"></span>
             </button>
+            <VendorHeaderProfileMenu storeName={storeName} />
           </div>
         </header>
 
