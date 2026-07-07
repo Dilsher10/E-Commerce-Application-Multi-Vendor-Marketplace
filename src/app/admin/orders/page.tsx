@@ -1,7 +1,8 @@
-import { CheckCircle2, Clock, Eye, PackageOpen, Search, Truck, XCircle } from 'lucide-react';
+import { CheckCircle2, Clock, Eye, PackageOpen, Truck, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
+import AdminOrderFilters from '@/components/AdminOrderFilters';
 
 type AdminOrder = {
   _id: { toString(): string };
@@ -19,6 +20,22 @@ type AdminOrder = {
   totalAmount: number;
   status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   createdAt?: Date;
+};
+
+type OrderFilters = {
+  q: string;
+  payment: string;
+  fulfillment: string;
+  from: string;
+  to: string;
+};
+
+type OrderQuery = {
+  status?: AdminOrder['status'] | { $in: AdminOrder['status'][] };
+  createdAt?: {
+    $gte?: Date;
+    $lte?: Date;
+  };
 };
 
 function formatPrice(value: number) {
@@ -58,19 +75,80 @@ function getFulfillmentStatus(orderStatus: AdminOrder['status']) {
   return { label: 'Unfulfilled', color: 'text-gray-500', icon: Clock };
 }
 
-async function getOrders() {
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] || '' : value || '';
+}
+
+function buildOrderQuery(filters: OrderFilters) {
+  const query: OrderQuery = {};
+
+  if (filters.payment === 'paid') query.status = { $in: ['paid', 'shipped', 'delivered'] };
+  if (filters.payment === 'pending') query.status = 'pending';
+  if (filters.payment === 'cancelled') query.status = 'cancelled';
+
+  if (filters.fulfillment === 'unfulfilled') query.status = 'pending';
+  if (filters.fulfillment === 'processing') query.status = 'paid';
+  if (filters.fulfillment === 'shipped') query.status = 'shipped';
+  if (filters.fulfillment === 'delivered') query.status = 'delivered';
+  if (filters.fulfillment === 'cancelled') query.status = 'cancelled';
+
+  if (filters.from || filters.to) {
+    query.createdAt = {};
+    if (filters.from) {
+      const fromDate = new Date(filters.from);
+      fromDate.setHours(0, 0, 0, 0);
+      query.createdAt.$gte = fromDate;
+    }
+    if (filters.to) {
+      const toDate = new Date(filters.to);
+      toDate.setHours(23, 59, 59, 999);
+      query.createdAt.$lte = toDate;
+    }
+  }
+
+  return query;
+}
+
+function filterOrdersBySearch(orders: AdminOrder[], search: string) {
+  const query = search.trim().toLowerCase();
+  if (!query) return orders;
+
+  return orders.filter((order) => {
+    const orderId = order._id.toString().toLowerCase();
+    const customerName = order.user?.name?.toLowerCase() || '';
+    const customerEmail = order.user?.email?.toLowerCase() || '';
+    const productText = order.items.map((item) => item.product?.title || '').join(' ').toLowerCase();
+
+    return orderId.includes(query) || customerName.includes(query) || customerEmail.includes(query) || productText.includes(query);
+  });
+}
+
+async function getOrders(filters: OrderFilters) {
   await dbConnect();
-  const orders = await Order.find({})
+  const orders = await Order.find(buildOrderQuery(filters))
     .populate('user', 'name email')
     .populate('items.product', 'title')
     .sort({ createdAt: -1 })
     .lean();
 
-  return orders as unknown as AdminOrder[];
+  return filterOrdersBySearch(orders as unknown as AdminOrder[], filters.q);
 }
 
-export default async function AdminOrders() {
-  const orders = await getOrders();
+export default async function AdminOrders({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const filters = {
+    q: getParam(params.q).trim(),
+    payment: getParam(params.payment),
+    fulfillment: getParam(params.fulfillment),
+    from: getParam(params.from),
+    to: getParam(params.to),
+  };
+  const orders = await getOrders(filters);
+  const hasFilters = Boolean(filters.q || filters.payment || filters.fulfillment || filters.from || filters.to);
   const paidCount = orders.filter((order) => getPaymentStatus(order.status) === 'Paid').length;
   const pendingCount = orders.filter((order) => order.status === 'pending').length;
   const shippedCount = orders.filter((order) => order.status === 'shipped').length;
@@ -108,20 +186,9 @@ export default async function AdminOrders() {
       </div>
 
       <div className="bg-white rounded-2xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
-        <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex flex-col lg:flex-row items-center justify-between gap-4 bg-gray-50/50">
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-1">
-            <div className="relative w-full sm:max-w-md">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-              <input
-                type="text"
-                placeholder="Search coming soon"
-                disabled
-                className="w-full pl-10 pr-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm outline-none transition-colors shadow-sm disabled:opacity-70"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 w-full lg:w-auto text-sm text-muted">
+        <div className="p-4 sm:p-6 border-b border-[var(--border-color)] bg-gray-50/50">
+          <AdminOrderFilters initialFilters={filters} />
+          <div className="flex items-center gap-3 mt-4 text-sm text-muted">
             <span className="font-semibold">{shippedCount} shipped</span>
             <span className="hidden sm:inline">/</span>
             <span className="font-semibold">{deliveredCount} delivered</span>
@@ -134,7 +201,8 @@ export default async function AdminOrders() {
               <PackageOpen size={26} />
             </div>
             <h3 className="text-xl font-bold mb-2">No orders found</h3>
-            <p className="text-muted max-w-md">Orders will appear here after customers complete checkout.</p>
+            <p className="text-muted max-w-md">{hasFilters ? 'No orders match the selected filters.' : 'Orders will appear here after customers complete checkout.'}</p>
+            {hasFilters && <Link href="/admin/orders" className="btn btn-secondary mt-5">Clear Filters</Link>}
           </div>
         ) : (
           <>
@@ -220,7 +288,7 @@ export default async function AdminOrders() {
 
             <div className="p-4 sm:p-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50">
               <p className="text-sm text-muted font-medium">
-                Showing <span className="font-bold text-[var(--text-main)]">{orders.length}</span> orders
+                Showing <span className="font-bold text-[var(--text-main)]">{orders.length}</span> orders{hasFilters ? ' matching filters' : ''}
               </p>
             </div>
           </>
