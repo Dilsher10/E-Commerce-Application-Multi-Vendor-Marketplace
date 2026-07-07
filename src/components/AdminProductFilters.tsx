@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Filter, Search, X } from 'lucide-react';
@@ -40,15 +40,17 @@ export default function AdminProductFilters({
     return query ? `/admin/products?${query}` : '/admin/products';
   }, [filters]);
 
-  function applyFilters(nextFilters = filters) {
+  const applyFilters = useCallback((nextFilters = filters, replace = false) => {
     const params = new URLSearchParams();
     if (nextFilters.q.trim()) params.set('q', nextFilters.q.trim());
     if (nextFilters.category) params.set('category', nextFilters.category);
     if (nextFilters.status) params.set('status', nextFilters.status);
     if (nextFilters.vendor) params.set('vendor', nextFilters.vendor);
     const query = params.toString();
-    router.push(query ? `/admin/products?${query}` : '/admin/products');
-  }
+    const href = query ? `/admin/products?${query}` : '/admin/products';
+    if (replace) router.replace(href);
+    else router.push(href);
+  }, [filters, router]);
 
   function updateFilter(name: keyof ProductFilters, value: string, submit = false) {
     const nextFilters = { ...filters, [name]: value };
@@ -60,6 +62,14 @@ export default function AdminProductFilters({
     event.preventDefault();
     applyFilters();
   }
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      applyFilters(filters, true);
+    }, 350);
+
+    return () => window.clearTimeout(timeout);
+  }, [applyFilters, filters]);
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_180px_180px_220px_auto] gap-3">
