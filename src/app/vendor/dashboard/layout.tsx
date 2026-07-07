@@ -50,16 +50,16 @@ export default async function VendorLayout({
             <LayoutDashboard size={20} />
             Dashboard
           </Link>
-          <Link href="/vendor/dashboard/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
+          <Link href="/vendor/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
             <Package size={20} />
             My Products
           </Link>
-          <Link href="/vendor/dashboard/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
+          <Link href="/vendor/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
             <ShoppingCart size={20} />
             Orders
             <span className="ml-auto bg-[var(--accent-color)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3</span>
           </Link>
-          <Link href="/vendor/dashboard/earnings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
+          <Link href="/vendor/earnings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:text-[var(--accent-color)] hover:bg-teal-50 transition-colors font-medium">
             <Wallet size={20} />
             Earnings
           </Link>

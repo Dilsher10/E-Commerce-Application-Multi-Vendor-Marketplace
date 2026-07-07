@@ -24,7 +24,7 @@ export default function VendorDashboard() {
           <p className="text-muted mt-1 text-sm">Welcome to your Seller Central dashboard, Tech Haven Ltd.</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/vendor/dashboard/products/new" className="flex items-center gap-2 bg-[var(--accent-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-600 transition-colors shadow-sm">
+          <Link href="/vendor/products/new" className="flex items-center gap-2 bg-[var(--accent-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-600 transition-colors shadow-sm">
             <Plus size={18} />
             Add Product
           </Link>
@@ -77,7 +77,7 @@ export default function VendorDashboard() {
         <div className="bg-white rounded-2xl border border-[var(--border-color)] p-6 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold m-0">Recent Orders</h2>
-            <Link href="/vendor/dashboard/orders" className="text-[var(--accent-color)] text-sm font-semibold hover:underline">View All</Link>
+            <Link href="/vendor/orders" className="text-[var(--accent-color)] text-sm font-semibold hover:underline">View All</Link>
           </div>
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-sm text-left">
