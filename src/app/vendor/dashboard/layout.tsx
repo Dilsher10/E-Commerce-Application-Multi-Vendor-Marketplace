@@ -47,7 +47,6 @@ export default async function VendorLayout({
 
   const vendor = await getVendorUser(session.id);
   const storeName = vendor?.vendorDetails?.storeName || vendor?.name || 'Vendor Store';
-  const avatarName = encodeURIComponent(storeName);
 
   return (
     <div className="flex h-screen bg-[var(--bg-color)] overflow-hidden">
@@ -65,20 +64,6 @@ export default async function VendorLayout({
           <span className="ml-2 text-xs bg-[var(--accent-color)]/10 text-[var(--accent-color)] px-2 py-0.5 rounded font-bold uppercase">Vendor</span>
         </div>
         
-        <div className="p-6 pb-2">
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              aria-label={storeName}
-              className="w-10 h-10 rounded-xl bg-cover bg-center shadow-sm"
-              style={{ backgroundImage: `url("https://ui-avatars.com/api/?name=${avatarName}&background=14B8A6&color=fff")` }}
-            />
-            <div>
-              <p className="font-bold text-[var(--text-main)] leading-tight">{storeName}</p>
-              <p className="text-xs text-muted">Verified Seller</p>
-            </div>
-          </div>
-        </div>
-
         <VendorSidebarNav />
         
         <div className="p-4 border-t border-[var(--border-color)]">
@@ -94,7 +79,7 @@ export default async function VendorLayout({
             <button className="md:hidden text-gray-500 hover:text-[var(--text-main)]">
               <MenuIcon />
             </button>
-            <h2 className="font-bold text-lg hidden sm:block">Seller Central</h2>
+            <h2 className="font-bold text-lg hidden sm:block truncate max-w-[280px]">{storeName}</h2>
           </div>
           
           <div className="flex items-center gap-4">

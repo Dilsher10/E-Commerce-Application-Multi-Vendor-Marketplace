@@ -70,7 +70,7 @@ export default async function VendorProductViewPage({ params }: { params: Promis
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">{product.title}</h1>
           <p className="text-muted mt-1 text-sm">Vendor product preview and inventory details.</p>
         </div>
-        <Link href={`/vendor/products/${productId}/edit`} className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full sm:w-auto">
+        <Link href={`/vendor/products/${productId}/edit`} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
           <Edit size={18} />
           Edit Product
         </Link>
@@ -91,7 +91,7 @@ export default async function VendorProductViewPage({ params }: { params: Promis
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${product.isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
               {product.isActive ? 'Active' : 'Inactive'}
             </span>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 text-[var(--accent-color)] border border-teal-100">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[var(--accent-color)] border border-blue-100">
               <Tag size={14} />
               {product.category}
             </span>

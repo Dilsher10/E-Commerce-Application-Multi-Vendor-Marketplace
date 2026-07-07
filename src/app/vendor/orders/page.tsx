@@ -102,7 +102,7 @@ export default async function VendorOrdersPage() {
 
       <div className="bg-white border border-[var(--border-color)] rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex items-center gap-3 bg-gray-50/70">
-          <div className="w-10 h-10 rounded-lg bg-teal-50 text-[var(--accent-color)] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[var(--accent-color)] flex items-center justify-center">
             <ReceiptText size={20} />
           </div>
           <div>

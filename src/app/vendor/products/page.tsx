@@ -69,7 +69,7 @@ export default async function VendorProductsPage() {
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">My Products</h1>
           <p className="text-muted mt-1 text-sm">Track the products published from your vendor account.</p>
         </div>
-        <Link href="/vendor/products/new" className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full sm:w-auto">
+        <Link href="/vendor/products/new" className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
           <PackagePlus size={18} />
           Add Product
         </Link>
@@ -93,7 +93,7 @@ export default async function VendorProductsPage() {
       <div className="bg-white border border-[var(--border-color)] rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/70">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 text-[var(--accent-color)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[var(--accent-color)] flex items-center justify-center">
               <Box size={20} />
             </div>
             <div>
@@ -114,7 +114,7 @@ export default async function VendorProductsPage() {
             </div>
             <h3 className="text-xl font-bold mb-2">No products yet</h3>
             <p className="text-muted mb-6 max-w-md">Add your first product to start building your storefront inventory.</p>
-            <Link href="/vendor/products/new" className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600">
+            <Link href="/vendor/products/new" className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)]">
               <PackagePlus size={18} />
               Add Product
             </Link>

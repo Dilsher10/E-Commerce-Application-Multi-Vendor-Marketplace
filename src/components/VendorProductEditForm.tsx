@@ -65,7 +65,7 @@ export default function VendorProductEditForm({ product }: { product: EditablePr
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Edit Product</h1>
           <p className="text-muted mt-1 text-sm">Update product details, stock, visibility, and media.</p>
         </div>
-        <button type="submit" form="edit-product-form" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full sm:w-auto">
+        <button type="submit" form="edit-product-form" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
@@ -136,7 +136,7 @@ export default function VendorProductEditForm({ product }: { product: EditablePr
             <div className="aspect-square rounded-lg border border-[var(--border-color)] bg-gray-100 bg-cover bg-center mb-4" style={{ backgroundImage: `url("${product.imageUrl}")` }} />
           )}
 
-          <label htmlFor="image" className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-color)] px-4 py-6 text-center hover:border-[var(--accent-color)] hover:bg-teal-50 transition-colors">
+          <label htmlFor="image" className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-color)] px-4 py-6 text-center hover:border-[var(--accent-color)] hover:bg-blue-50 transition-colors">
             <ImagePlus size={28} className="text-[var(--accent-color)] mb-3" />
             <span className="text-sm font-semibold text-[var(--text-main)]">{imageName || 'Choose replacement image'}</span>
             <span className="text-xs text-muted mt-1">Optional PNG, JPG, or WEBP</span>
@@ -151,7 +151,7 @@ export default function VendorProductEditForm({ product }: { product: EditablePr
           </label>
 
           <div className="mt-6 flex flex-col gap-3">
-            <button type="submit" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full">
+            <button type="submit" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full">
               <Save size={18} />
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

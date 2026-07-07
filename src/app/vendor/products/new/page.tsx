@@ -54,7 +54,7 @@ export default function NewVendorProductPage() {
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Add Product</h1>
           <p className="text-muted mt-1 text-sm">Create a product listing for your storefront.</p>
         </div>
-        <button type="submit" form="add-product-form" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full sm:w-auto">
+        <button type="submit" form="add-product-form" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full sm:w-auto">
           <PackagePlus size={18} />
           {loading ? 'Adding...' : 'Add Product'}
         </button>
@@ -113,7 +113,7 @@ export default function NewVendorProductPage() {
 
         <aside className="bg-white border border-[var(--border-color)] rounded-lg p-6 shadow-sm h-fit">
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 text-[var(--accent-color)] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[var(--accent-color)] flex items-center justify-center">
               <PackagePlus size={21} />
             </div>
             <div>
@@ -122,7 +122,7 @@ export default function NewVendorProductPage() {
             </div>
           </div>
 
-          <label htmlFor="image" className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-color)] px-4 py-6 text-center hover:border-[var(--accent-color)] hover:bg-teal-50 transition-colors">
+          <label htmlFor="image" className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-color)] px-4 py-6 text-center hover:border-[var(--accent-color)] hover:bg-blue-50 transition-colors">
             <ImagePlus size={30} className="text-[var(--accent-color)] mb-3" />
             <span className="text-sm font-semibold text-[var(--text-main)]">{imageName || 'Choose product image'}</span>
             <span className="text-xs text-muted mt-1">PNG, JPG, or WEBP</span>
@@ -137,7 +137,7 @@ export default function NewVendorProductPage() {
           </label>
 
           <div className="mt-6 flex flex-col gap-3">
-            <button type="submit" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-teal-600 w-full">
+            <button type="submit" disabled={loading} className="btn bg-[var(--accent-color)] text-white hover:bg-[var(--primary-hover)] w-full">
               <PackagePlus size={18} />
               {loading ? 'Adding...' : 'Add Product'}
             </button>

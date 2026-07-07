@@ -98,7 +98,7 @@ export default async function VendorEarningsPage() {
           <p className="text-3xl font-extrabold text-[var(--text-main)] m-0">{formatPrice(platformFee)}</p>
         </div>
         <div className="bg-white border border-[var(--border-color)] rounded-lg p-5 shadow-sm">
-          <div className="w-10 h-10 rounded-lg bg-teal-50 text-[var(--accent-color)] flex items-center justify-center mb-4">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[var(--accent-color)] flex items-center justify-center mb-4">
             <PackageCheck size={20} />
           </div>
           <p className="text-sm font-semibold text-muted mb-1">Items Sold</p>

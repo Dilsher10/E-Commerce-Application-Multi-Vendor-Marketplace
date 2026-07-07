@@ -137,7 +137,7 @@ export default async function VendorDashboard() {
   const setupOffset = 226.2 * (1 - setupPercent / 100);
 
   const stats = [
-    { title: 'Monthly Earnings', value: formatPrice(monthlyEarnings), change: 'This month', icon: DollarSign, color: 'text-teal-600', bg: 'bg-teal-100' },
+    { title: 'Monthly Earnings', value: formatPrice(monthlyEarnings), change: 'This month', icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-100' },
     { title: 'Active Orders', value: activeOrders.length.toString(), change: `${completedOrders.length} delivered`, icon: ShoppingCart, color: 'text-blue-600', bg: 'bg-blue-100' },
     { title: 'Items Sold', value: itemsSold.toString(), change: `${orders.length} orders`, icon: Star, color: 'text-orange-600', bg: 'bg-orange-100' },
     { title: 'Total Products', value: products.length.toString(), change: `${activeProducts.length} active`, icon: Package, color: 'text-purple-600', bg: 'bg-purple-100' },
@@ -165,7 +165,7 @@ export default async function VendorDashboard() {
           <p className="text-muted mt-1 text-sm">Welcome to your Seller Central dashboard, {storeName}.</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/vendor/products/new" className="flex items-center gap-2 bg-[var(--accent-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-600 transition-colors shadow-sm">
+          <Link href="/vendor/products/new" className="flex items-center gap-2 bg-[var(--accent-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors shadow-sm">
             <PackagePlus size={18} />
             Add Product
           </Link>

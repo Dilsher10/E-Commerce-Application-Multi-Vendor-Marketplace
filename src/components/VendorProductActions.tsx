@@ -41,7 +41,7 @@ export default function VendorProductActions({
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex items-center justify-end gap-2">
-        <Link href={`/vendor/products/${productId}`} className="p-2 text-gray-400 hover:text-[var(--accent-color)] hover:bg-teal-50 rounded-lg transition-colors" title="View product">
+        <Link href={`/vendor/products/${productId}`} className="p-2 text-gray-400 hover:text-[var(--accent-color)] hover:bg-blue-50 rounded-lg transition-colors" title="View product">
           <Eye size={18} />
         </Link>
         <Link href={`/vendor/products/${productId}/edit`} className="p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-blue-50 rounded-lg transition-colors" title="Edit product">
