@@ -161,7 +161,7 @@ export default async function AdminProducts() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <Link href={`/products/${productId}`} className="inline-flex items-center justify-center p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-blue-50 rounded-lg transition-colors" title="View product">
+                          <Link href={`/admin/products/${productId}`} className="inline-flex items-center justify-center p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-blue-50 rounded-lg transition-colors" title="View product">
                             <Eye size={18} />
                           </Link>
                         </td>
