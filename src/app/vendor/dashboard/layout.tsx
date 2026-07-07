@@ -4,6 +4,32 @@ import { redirect } from 'next/navigation';
 import { LayoutDashboard, Package, ShoppingCart, Settings, Bell, Store, BarChart, Wallet } from 'lucide-react';
 import { verifyToken } from '@/lib/auth';
 import VendorLogoutButton from '@/components/VendorLogoutButton';
+import dbConnect from '@/lib/db';
+import { User } from '@/models/User';
+
+type VendorSession = {
+  id: string;
+  role: 'vendor';
+};
+
+type VendorUser = {
+  name: string;
+  vendorDetails?: {
+    storeName?: string;
+  };
+};
+
+function isVendorSession(session: unknown): session is VendorSession {
+  if (typeof session !== 'object' || session === null) return false;
+  const value = session as Record<string, unknown>;
+  return value.role === 'vendor' && typeof value.id === 'string';
+}
+
+async function getVendorUser(vendorId: string) {
+  await dbConnect();
+  const user = await User.findById(vendorId).select('name vendorDetails.storeName').lean();
+  return user as unknown as VendorUser | null;
+}
 
 export default async function VendorLayout({
   children,
@@ -14,9 +40,13 @@ export default async function VendorLayout({
   const token = cookieStore.get('auth_token')?.value;
   const session = token ? verifyToken(token) : null;
 
-  if (!session || typeof session === 'string' || session.role !== 'vendor') {
+  if (!isVendorSession(session)) {
     redirect('/auth/login');
   }
+
+  const vendor = await getVendorUser(session.id);
+  const storeName = vendor?.vendorDetails?.storeName || vendor?.name || 'Vendor Store';
+  const avatarName = encodeURIComponent(storeName);
 
   return (
     <div className="flex h-screen bg-[var(--bg-color)] overflow-hidden">
@@ -36,9 +66,13 @@ export default async function VendorLayout({
         
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
-            <img src="https://ui-avatars.com/api/?name=Tech+Haven&background=14B8A6&color=fff" alt="Vendor Store" className="w-10 h-10 rounded-xl object-cover shadow-sm" />
+            <div
+              aria-label={storeName}
+              className="w-10 h-10 rounded-xl bg-cover bg-center shadow-sm"
+              style={{ backgroundImage: `url("https://ui-avatars.com/api/?name=${avatarName}&background=14B8A6&color=fff")` }}
+            />
             <div>
-              <p className="font-bold text-[var(--text-main)] leading-tight">Tech Haven Ltd.</p>
+              <p className="font-bold text-[var(--text-main)] leading-tight">{storeName}</p>
               <p className="text-xs text-muted">Verified Seller</p>
             </div>
           </div>
