@@ -1,7 +1,9 @@
-import { Eye, Package, Search } from 'lucide-react';
+import mongoose from 'mongoose';
+import { Eye, Filter, Package, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
+import { User } from '@/models/User';
 
 type AdminProduct = {
   _id: { toString(): string };
@@ -20,6 +22,29 @@ type AdminProduct = {
   createdAt?: Date;
 };
 
+type AdminVendorFilter = {
+  _id: { toString(): string };
+  name?: string;
+  vendorDetails?: {
+    storeName?: string;
+  };
+};
+
+type ProductFilters = {
+  q: string;
+  category: string;
+  status: string;
+  vendor: string;
+};
+
+type ProductQuery = {
+  $or?: Array<{ title?: RegExp; category?: RegExp; description?: RegExp }>;
+  category?: string;
+  vendor?: mongoose.Types.ObjectId;
+  isActive?: boolean;
+  stock?: number | { $gt?: number; $lt?: number };
+};
+
 function formatPrice(price: number) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -34,22 +59,71 @@ function getStatus(product: AdminProduct) {
   return { label: 'Active', className: 'bg-green-100 text-green-700 border border-green-200' };
 }
 
-async function getProducts() {
-  await dbConnect();
-  const products = await Product.find({})
-    .populate('vendor', 'name vendorDetails.storeName')
-    .sort({ createdAt: -1 })
-    .lean();
-
-  return products as unknown as AdminProduct[];
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] || '' : value || '';
 }
 
-export default async function AdminProducts() {
-  const products = await getProducts();
+function buildProductQuery(filters: ProductFilters) {
+  const query: ProductQuery = {};
+
+  if (filters.q) {
+    const pattern = new RegExp(filters.q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    query.$or = [{ title: pattern }, { category: pattern }, { description: pattern }];
+  }
+
+  if (filters.category) query.category = filters.category;
+  if (filters.vendor && mongoose.isValidObjectId(filters.vendor)) {
+    query.vendor = new mongoose.Types.ObjectId(filters.vendor);
+  }
+
+  if (filters.status === 'active') query.isActive = true;
+  if (filters.status === 'inactive') query.isActive = false;
+  if (filters.status === 'low-stock') {
+    query.isActive = true;
+    query.stock = { $gt: 0, $lt: 10 };
+  }
+  if (filters.status === 'out-of-stock') query.stock = 0;
+
+  return query;
+}
+
+async function getProductData(filters: ProductFilters) {
+  await dbConnect();
+  const query = buildProductQuery(filters);
+
+  const [products, allProducts, vendors] = await Promise.all([
+    Product.find(query)
+      .populate('vendor', 'name vendorDetails.storeName')
+      .sort({ createdAt: -1 })
+      .lean(),
+    Product.find({}).select('category').lean(),
+    User.find({ role: 'vendor' }).select('name vendorDetails.storeName').sort({ name: 1 }).lean(),
+  ]);
+
+  return {
+    products: products as unknown as AdminProduct[],
+    categories: Array.from(new Set((allProducts as Array<{ category?: string }>).map((product) => product.category).filter(Boolean))).sort(),
+    vendors: vendors as unknown as AdminVendorFilter[],
+  };
+}
+
+export default async function AdminProducts({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const filters = {
+    q: getParam(params.q).trim(),
+    category: getParam(params.category),
+    status: getParam(params.status),
+    vendor: getParam(params.vendor),
+  };
+  const { products, categories, vendors } = await getProductData(filters);
   const activeCount = products.filter((product) => product.isActive).length;
   const lowStockCount = products.filter((product) => product.isActive && product.stock > 0 && product.stock < 10).length;
   const outOfStockCount = products.filter((product) => product.stock === 0).length;
-  const categories = Array.from(new Set(products.map((product) => product.category).filter(Boolean)));
+  const hasFilters = Boolean(filters.q || filters.category || filters.status || filters.vendor);
 
   return (
     <div className="animate-fade-in max-w-7xl mx-auto">
@@ -80,19 +154,55 @@ export default async function AdminProducts() {
       </div>
 
       <div className="bg-white rounded-2xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
-        <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50">
-          <div className="relative w-full sm:w-96">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder="Search coming soon"
-              disabled
-              className="w-full pl-10 pr-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm outline-none transition-colors shadow-sm disabled:opacity-70"
-            />
-          </div>
-          <select disabled className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full sm:w-auto disabled:opacity-70">
-            <option>{categories.length ? `${categories.length} categories` : 'No categories'}</option>
-          </select>
+        <div className="p-4 sm:p-6 border-b border-[var(--border-color)] bg-gray-50/50">
+          <form action="/admin/products" className="grid grid-cols-1 lg:grid-cols-[1fr_180px_180px_220px_auto] gap-3">
+            <div className="relative">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+              <input
+                name="q"
+                type="search"
+                placeholder="Search title, category, or description..."
+                defaultValue={filters.q}
+                className="w-full pl-10 pr-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm outline-none transition-colors shadow-sm"
+              />
+            </div>
+
+            <select name="category" defaultValue={filters.category} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+
+            <select name="status" defaultValue={filters.status} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+            </select>
+
+            <select name="vendor" defaultValue={filters.vendor} className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full">
+              <option value="">All Vendors</option>
+              {vendors.map((vendor) => {
+                const vendorId = vendor._id.toString();
+                const vendorName = vendor.vendorDetails?.storeName || vendor.name || 'Unnamed vendor';
+                return <option key={vendorId} value={vendorId}>{vendorName}</option>;
+              })}
+            </select>
+
+            <div className="flex gap-2">
+              <button type="submit" className="btn bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] w-full lg:w-auto">
+                <Filter size={16} />
+                Filter
+              </button>
+              {hasFilters && (
+                <Link href="/admin/products" className="btn btn-secondary w-full lg:w-auto" title="Clear filters">
+                  <X size={16} />
+                </Link>
+              )}
+            </div>
+          </form>
         </div>
 
         {products.length === 0 ? (
@@ -102,6 +212,7 @@ export default async function AdminProducts() {
             </div>
             <h3 className="text-xl font-bold mb-2">No products found</h3>
             <p className="text-muted max-w-md">Products will appear here after vendors add listings.</p>
+            {hasFilters && <Link href="/admin/products" className="btn btn-secondary mt-5">Clear Filters</Link>}
           </div>
         ) : (
           <>
@@ -174,7 +285,7 @@ export default async function AdminProducts() {
 
             <div className="p-4 sm:p-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50">
               <p className="text-sm text-muted font-medium">
-                Showing <span className="font-bold text-[var(--text-main)]">{products.length}</span> products
+                Showing <span className="font-bold text-[var(--text-main)]">{products.length}</span> products{hasFilters ? ' matching filters' : ''}
               </p>
             </div>
           </>
