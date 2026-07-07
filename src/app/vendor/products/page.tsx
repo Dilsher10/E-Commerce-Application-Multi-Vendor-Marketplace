@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Box, Eye, PackagePlus, Search } from 'lucide-react';
+import { Box, PackagePlus, Search } from 'lucide-react';
 import dbConnect from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 import { Product } from '@/models/Product';
+import VendorProductActions from '@/components/VendorProductActions';
 
 type VendorSession = {
   id: string;
@@ -172,9 +173,7 @@ export default async function VendorProductsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <Link href={`/products/${productId}`} className="inline-flex items-center justify-center p-2 text-gray-400 hover:text-[var(--accent-color)] hover:bg-teal-50 rounded-lg transition-colors" title="View product">
-                          <Eye size={18} />
-                        </Link>
+                        <VendorProductActions productId={productId} productTitle={product.title} />
                       </td>
                     </tr>
                   );
