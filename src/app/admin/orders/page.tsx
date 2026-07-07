@@ -1,4 +1,5 @@
 import { CheckCircle2, Clock, Eye, PackageOpen, Search, Truck, XCircle } from 'lucide-react';
+import Link from 'next/link';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
 
@@ -206,9 +207,9 @@ export default async function AdminOrders() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-blue-50 rounded-lg transition-colors" title="View order details">
+                          <Link href={`/admin/orders/${orderId}`} className="inline-flex items-center justify-center p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-blue-50 rounded-lg transition-colors" title="View order details">
                             <Eye size={18} />
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                     );
