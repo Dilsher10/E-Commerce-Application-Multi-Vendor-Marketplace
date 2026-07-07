@@ -20,8 +20,7 @@ export default function VendorSidebarNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1 overflow-y-auto px-4 flex flex-col gap-1">
-      <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2 px-2">Store Management</p>
+    <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
       {vendorNavItems.map((item) => {
         const Icon = item.icon;
         const isActive = isActivePath(pathname, item.href, item.exact);
@@ -31,13 +30,13 @@ export default function VendorSidebarNav() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
-              isActive ? 'bg-[#2563eb] text-white shadow-sm' : 'text-gray-600 hover:text-[#2563eb] hover:bg-blue-50'
+              isActive ? 'bg-[#2563eb] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
             }`}
           >
             <Icon size={20} />
             {item.label}
             {item.badge && (
-              <span className="ml-auto bg-[#2563eb] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <span className="ml-auto bg-[var(--danger)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                 {item.badge}
               </span>
             )}

@@ -51,22 +51,22 @@ export default async function VendorLayout({
   return (
     <div className="flex h-screen bg-[var(--bg-color)] overflow-hidden">
       {/* Vendor Sidebar */}
-      <aside className="w-64 bg-white border-r border-[var(--border-color)] flex flex-col hidden md:flex flex-shrink-0">
-        <div className="h-16 flex items-center px-6 border-b border-[var(--border-color)]">
+      <aside className="w-64 bg-[var(--secondary-color)] text-white flex flex-col hidden md:flex flex-shrink-0">
+        <div className="h-16 flex items-center px-6 border-b border-white/10">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent-color)] flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[var(--primary-color)] flex items-center justify-center shadow-sm">
               <Store size={18} color="white" />
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-[var(--text-main)]">
+            <span className="text-xl font-extrabold tracking-tight text-white">
               LUMINA
             </span>
           </Link>
-          <span className="ml-2 text-xs bg-[var(--accent-color)]/10 text-[var(--accent-color)] px-2 py-0.5 rounded font-bold uppercase">Vendor</span>
+          <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded font-medium text-white/90">VENDOR</span>
         </div>
         
         <VendorSidebarNav />
         
-        <div className="p-4 border-t border-[var(--border-color)]">
+        <div className="p-4 border-t border-white/10">
           <VendorLogoutButton />
         </div>
       </aside>

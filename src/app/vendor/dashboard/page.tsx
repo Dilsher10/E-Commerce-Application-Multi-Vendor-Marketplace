@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { CheckCircle2, DollarSign, Package, PackagePlus, ShoppingCart, Star } from 'lucide-react';
+import { CheckCircle2, DollarSign, Package, ShoppingCart, Star } from 'lucide-react';
 import dbConnect from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 import { Order } from '@/models/Order';
@@ -163,12 +163,6 @@ export default async function VendorDashboard() {
         <div>
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Overview</h1>
           <p className="text-muted mt-1 text-sm">Welcome to your Seller Central dashboard, {storeName}.</p>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/vendor/products/new" className="flex items-center gap-2 bg-[var(--accent-color)] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors shadow-sm">
-            <PackagePlus size={18} />
-            Add Product
-          </Link>
         </div>
       </div>
 
