@@ -62,9 +62,8 @@ export default function AdminOrderFilters({ initialFilters }: { initialFilters: 
   }, [applyFilters, filters]);
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-[1fr_160px_180px_150px_150px_auto] gap-3 w-full">
+    <form onSubmit={handleSubmit} className="grid grid-cols-5 gap-3 w-full">
       <div className="relative">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
         <input
           name="q"
           type="search"
@@ -106,18 +105,6 @@ export default function AdminOrderFilters({ initialFilters }: { initialFilters: 
         className="px-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm font-semibold text-[var(--text-main)] shadow-sm outline-none w-full"
         aria-label="To date"
       />
-
-      <div className="flex gap-2">
-        <button type="submit" className="btn bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] w-full xl:w-auto">
-          <Filter size={16} />
-          Filter
-        </button>
-        {hasFilters && (
-          <Link href="/admin/orders" className="btn btn-secondary w-full xl:w-auto" title="Clear filters">
-            <X size={16} />
-          </Link>
-        )}
-      </div>
 
       <input type="hidden" name="filterUrl" value={filterUrl} readOnly />
     </form>

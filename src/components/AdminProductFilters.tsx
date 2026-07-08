@@ -72,9 +72,8 @@ export default function AdminProductFilters({
   }, [applyFilters, filters]);
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_180px_180px_220px_auto] gap-3">
+    <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-5">
       <div className="relative">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
         <input
           name="q"
           type="search"
@@ -106,18 +105,6 @@ export default function AdminProductFilters({
           <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
         ))}
       </select>
-
-      <div className="flex gap-2">
-        <button type="submit" className="btn bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] w-full lg:w-auto">
-          <Filter size={16} />
-          Filter
-        </button>
-        {hasFilters && (
-          <Link href="/admin/products" className="btn btn-secondary w-full lg:w-auto" title="Clear filters">
-            <X size={16} />
-          </Link>
-        )}
-      </div>
 
       <input type="hidden" name="filterUrl" value={filterUrl} readOnly />
     </form>

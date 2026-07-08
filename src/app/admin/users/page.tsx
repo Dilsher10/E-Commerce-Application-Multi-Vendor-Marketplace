@@ -203,7 +203,6 @@ export default function AdminUsers() {
       <div className="bg-white rounded-2xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50">
           <div className="relative w-full sm:w-96">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input type="text" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search users by name, email, or ID..." className="w-full pl-10 pr-4 py-2 bg-white border border-[var(--border-color)] rounded-lg text-sm focus:border-[var(--primary-color)] outline-none transition-colors shadow-sm" />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">

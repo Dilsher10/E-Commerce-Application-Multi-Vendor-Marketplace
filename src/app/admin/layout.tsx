@@ -56,7 +56,7 @@ export default async function AdminLayout({
               <input 
                 type="text" 
                 placeholder="Search anything..." 
-                className="bg-transparent border-none outline-none w-full text-sm text-[var(--text-main)]"
+                className="bg-transparent search w-full text-sm text-[var(--text-main)]"
               />
             </div>
           </div>
