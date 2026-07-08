@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ShoppingBag, Zap, Shield, Headphones, Monitor, Watch, Smartphone, Star, ArrowRight, Truck, Gift } from 'lucide-react';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
+import { Category } from '@/models/Category';
 import ProductCardActions from '@/components/ProductCardActions';
 
 type HomeProduct = {
@@ -38,6 +39,10 @@ type ProductDocument = {
   };
 };
 
+type CategoryDocument = {
+  name: string;
+};
+
 const categoryStyles = [
   { icon: Headphones, color: 'bg-blue-100 text-blue-600' },
   { icon: Monitor, color: 'bg-purple-100 text-purple-600' },
@@ -65,7 +70,7 @@ function serializeProduct(product: ProductDocument): HomeProduct {
 async function getHomepageData() {
   await dbConnect();
 
-  const [latestProducts, categoryCounts] = await Promise.all([
+  const [latestProducts, categoryCounts, adminCategories] = await Promise.all([
     Product.find({ isActive: true })
       .select('title price category images stock vendor createdAt')
       .populate('vendor', 'name vendorDetails.storeName')
@@ -76,14 +81,18 @@ async function getHomepageData() {
       { $match: { isActive: true } },
       { $group: { _id: '$category', count: { $sum: 1 } } },
       { $sort: { count: -1, _id: 1 } },
-      { $limit: 4 },
     ]),
+    Category.find({ isActive: true }).select('name').sort({ name: 1 }).lean<CategoryDocument[]>(),
   ]);
 
   const products = latestProducts.map(serializeProduct);
-  const categories: CategorySummary[] = categoryCounts.map((category, index) => ({
-    name: category._id,
-    count: category.count,
+  const countByCategory = new Map(categoryCounts.map((category) => [category._id, category.count]));
+  const categoryNames = adminCategories.length > 0
+    ? adminCategories.map((category) => category.name)
+    : categoryCounts.map((category) => category._id);
+  const categories: CategorySummary[] = categoryNames.map((categoryName, index) => ({
+    name: categoryName,
+    count: countByCategory.get(categoryName) || 0,
     ...categoryStyles[index % categoryStyles.length],
   }));
 
@@ -216,12 +225,12 @@ export default async function Home() {
         <div className="container">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold m-0">Explore Categories</h2>
-            <Link href="/categories" className="text-[var(--primary-color)] font-semibold text-sm hover:underline">See All</Link>
+            <Link href="/products" className="text-[var(--primary-color)] font-semibold text-sm hover:underline">See All</Link>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {categories.map((cat, i) => (
-              <Link href={`/products?category=${cat.name.toLowerCase()}`} key={i} className="flex items-center gap-6 p-8 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-color)] hover:bg-white hover:border-[var(--primary-color)] transition-all group shadow-sm hover:shadow-md">
+              <Link href={`/products?category=${encodeURIComponent(cat.name)}`} key={i} className="flex items-center gap-6 p-8 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-color)] hover:bg-white hover:border-[var(--primary-color)] transition-all group shadow-sm hover:shadow-md">
                 <div className={`w-16 h-16 rounded-xl ${cat.color} flex items-center justify-center flex-shrink-0`}>
                   <cat.icon size={24} />
                 </div>
