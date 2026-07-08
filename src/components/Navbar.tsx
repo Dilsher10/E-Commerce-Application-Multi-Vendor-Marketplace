@@ -2,16 +2,10 @@
 
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { useEffect, useState } from 'react';
-import { ShoppingCart, User, Search, Store, Heart, Bell, ChevronDown, Menu, Globe } from 'lucide-react';
+import { ShoppingCart, User, Search, Store, Heart, Bell, ChevronDown, Menu } from 'lucide-react';
 
 export default function Navbar() {
-  const { cart } = useCart();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { cart, wishlist, cartTotal } = useCart();
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -36,6 +30,9 @@ export default function Navbar() {
 
             {/* Powerful Search Bar */}
             <div className="hidden md:flex flex-1 max-w-2xl relative group">
+              <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center pl-4">
+                <Search size={18} className="text-muted group-focus-within:text-[var(--primary-color)] transition-colors" />
+              </div>
               <input 
                 type="text" 
                 placeholder="Search products, brands, categories..." 
@@ -48,8 +45,13 @@ export default function Navbar() {
 
             {/* Nav Actions */}
             <nav className="flex items-center gap-2 sm:gap-4">
-              <Link href="#" className="p-2.5 text-[var(--text-muted)] hover:text-[var(--primary-color)] hover:bg-[var(--bg-surface-hover)] rounded-full transition-all relative hidden sm:block">
+              <Link href="/wishlist" className="p-2.5 text-[var(--text-muted)] hover:text-[var(--primary-color)] hover:bg-[var(--bg-surface-hover)] rounded-full transition-all relative hidden sm:block" aria-label="Wishlist">
                 <Heart size={22} />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
+                    {wishlist.length}
+                  </span>
+                )}
               </Link>
               
               <Link href="#" className="p-2.5 text-[var(--text-muted)] hover:text-[var(--primary-color)] hover:bg-[var(--bg-surface-hover)] rounded-full transition-all relative hidden sm:block">
@@ -62,7 +64,7 @@ export default function Navbar() {
               <Link href="/cart" className="relative p-2.5 text-[var(--text-main)] hover:text-[var(--primary-color)] hover:bg-[var(--bg-surface-hover)] rounded-full transition-all group flex items-center gap-2">
                 <div className="relative">
                   <ShoppingCart size={22} />
-                  {mounted && totalItems > 0 && (
+                  {totalItems > 0 && (
                     <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--primary-color)] text-[10px] font-bold text-white border-2 border-white">
                       {totalItems}
                     </span>
@@ -70,7 +72,7 @@ export default function Navbar() {
                 </div>
                 <div className="hidden lg:flex flex-col items-start ml-1">
                   <span className="text-[10px] text-muted leading-tight">My Cart</span>
-                  <span className="text-sm font-bold leading-tight">$0.00</span>
+                  <span className="text-sm font-bold leading-tight">${cartTotal.toFixed(2)}</span>
                 </div>
               </Link>
 

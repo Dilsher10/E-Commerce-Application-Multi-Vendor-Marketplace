@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Star, ShieldCheck, Truck, ArrowLeft, Minus, Plus, ShoppingCart, Heart, Info, CheckCircle2 } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 type Product = {
   _id: string;
@@ -14,6 +15,7 @@ type Product = {
   images?: string[];
   stock: number;
   vendor?: {
+    _id?: string;
     name?: string;
     vendorDetails?: {
       storeName?: string;
@@ -23,6 +25,7 @@ type Product = {
 
 export default function ProductDetails() {
   const params = useParams<{ id: string }>();
+  const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [product, setProduct] = useState<Product | null>(null);
@@ -82,6 +85,7 @@ export default function ProductDetails() {
 
   const images = product.images?.length ? product.images : [];
   const vendorName = product.vendor?.vendorDetails?.storeName || product.vendor?.name || 'Verified vendor';
+  const wishlisted = isWishlisted(product._id);
 
   return (
     <div className="bg-[var(--bg-color)] min-h-screen py-8 animate-fade-in">
@@ -173,13 +177,36 @@ export default function ProductDetails() {
                   </button>
                 </div>
 
-                <button disabled={product.stock === 0} className="flex-1 bg-[var(--primary-color)] text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--primary-hover)] disabled:bg-gray-300 disabled:shadow-none transition-colors shadow-lg shadow-blue-500/30">
+                <button
+                  disabled={product.stock === 0}
+                  onClick={() =>
+                    addToCart({
+                      product: product._id,
+                      title: product.title,
+                      price: product.price,
+                      image: images[0],
+                      vendor: product.vendor?._id || '',
+                      quantity,
+                    })
+                  }
+                  className="addToCartBtn flex-1 text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:shadow-none transition-colors shadow-lg shadow-blue-500/30"
+                >
                   <ShoppingCart size={20} />
                   Add to Cart
                 </button>
                 
-                <button className="w-14 h-14 border border-[var(--border-color)] bg-white rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors shadow-sm">
-                  <Heart size={22} />
+                <button
+                  type="button"
+                  onClick={() => toggleWishlist(product._id)}
+                  aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                  aria-pressed={wishlisted}
+                  className={`w-14 h-14 border rounded-xl flex items-center justify-center transition-colors shadow-sm ${
+                    wishlisted
+                      ? 'bg-red-50 text-red-500 border-red-200'
+                      : 'bg-white text-gray-400 border-[var(--border-color)] hover:text-red-500 hover:border-red-200 hover:bg-red-50'
+                  }`}
+                >
+                  <Heart size={22} fill={wishlisted ? 'currentColor' : 'none'} />
                 </button>
               </div>
 

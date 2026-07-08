@@ -13,36 +13,56 @@ export interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
+  wishlist: string[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  toggleWishlist: (productId: string) => void;
+  isWishlisted: (productId: string) => boolean;
   cartTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return [];
 
-  useEffect(() => {
     const savedCart = localStorage.getItem('lumina_cart');
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
-      } catch (e) {
+        return JSON.parse(savedCart);
+      } catch {
         console.error('Failed to parse cart');
       }
     }
-    setIsInitialized(true);
-  }, []);
+
+    return [];
+  });
+
+  const [wishlist, setWishlist] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+
+    const savedWishlist = localStorage.getItem('lumina_wishlist');
+    if (savedWishlist) {
+      try {
+        return JSON.parse(savedWishlist);
+      } catch {
+        console.error('Failed to parse wishlist');
+      }
+    }
+
+    return [];
+  });
 
   useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem('lumina_cart', JSON.stringify(cart));
-    }
-  }, [cart, isInitialized]);
+    localStorage.setItem('lumina_cart', JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('lumina_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
 
   const addToCart = (newItem: CartItem) => {
     setCart((prev) => {
@@ -69,10 +89,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => setCart([]);
 
+  const toggleWishlist = (productId: string) => {
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev.filter((item) => item !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const isWishlisted = (productId: string) => wishlist.includes(productId);
+
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal }}>
+    <CartContext.Provider value={{ cart, wishlist, addToCart, removeFromCart, updateQuantity, clearCart, toggleWishlist, isWishlisted, cartTotal }}>
       {children}
     </CartContext.Provider>
   );

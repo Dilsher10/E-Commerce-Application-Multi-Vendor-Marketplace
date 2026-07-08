@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ShoppingBag, Zap, Shield, Headphones, Monitor, Watch, Smartphone, Star, ArrowRight, Truck, Gift } from 'lucide-react';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
+import ProductCardActions from '@/components/ProductCardActions';
 
 type HomeProduct = {
   id: string;
@@ -11,6 +12,7 @@ type HomeProduct = {
   image?: string;
   stock: number;
   vendorName: string;
+  vendorId?: string;
 };
 
 type CategorySummary = {
@@ -28,6 +30,7 @@ type ProductDocument = {
   images?: string[];
   stock?: number;
   vendor?: {
+    _id?: unknown;
     name?: string;
     vendorDetails?: {
       storeName?: string;
@@ -55,6 +58,7 @@ function serializeProduct(product: ProductDocument): HomeProduct {
     image: product.images?.[0],
     stock: product.stock ?? 0,
     vendorName: product.vendor?.vendorDetails?.storeName || product.vendor?.name || 'Verified vendor',
+    vendorId: product.vendor?._id ? String(product.vendor._id) : undefined,
   };
 }
 
@@ -94,8 +98,8 @@ async function getHomepageData() {
 
 function ProductCard({ product, badge }: { product: HomeProduct; badge?: string }) {
   return (
-    <Link href={`/products/${product.id}`} className="bg-white rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
-      <div className="relative h-64 overflow-hidden bg-gray-50 p-4 flex items-center justify-center">
+    <div className="bg-white rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+      <Link href={`/products/${product.id}`} className="relative h-64 overflow-hidden bg-gray-50 p-4 flex items-center justify-center">
         {product.image ? (
           <img src={product.image} alt={product.title} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
         ) : (
@@ -108,9 +112,11 @@ function ProductCard({ product, badge }: { product: HomeProduct; badge?: string 
             {badge || product.category}
           </span>
         </div>
-      </div>
+      </Link>
       <div className="p-8 flex flex-col flex-grow">
-        <h3 className="text-base font-bold line-clamp-2 leading-snug mb-3">{product.title}</h3>
+        <Link href={`/products/${product.id}`} className="text-base font-bold line-clamp-2 leading-snug mb-3 hover:text-[var(--primary-color)] transition-colors">
+          {product.title}
+        </Link>
         <div className="flex items-center justify-between gap-3 mb-4">
           <span className="text-xs text-muted truncate">By {product.vendorName}</span>
           <span className={`text-xs font-semibold ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -120,12 +126,10 @@ function ProductCard({ product, badge }: { product: HomeProduct; badge?: string 
 
         <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
           <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
-          <span className="w-10 h-10 rounded-full bg-[var(--bg-color)] flex items-center justify-center group-hover:bg-[var(--primary-color)] group-hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
-            <ShoppingBag size={18} />
-          </span>
+          <ProductCardActions product={product} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
