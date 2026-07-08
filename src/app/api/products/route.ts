@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { UploadApiResponse } from 'cloudinary';
+import type { SortOrder } from 'mongoose';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
 import { getUserFromRequest } from '@/lib/auth';
@@ -24,15 +25,55 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get('category');
-    const vendor = searchParams.get('vendor');
+    const category = searchParams.get('category')?.trim();
+    const vendor = searchParams.get('vendor')?.trim();
+    const search = searchParams.get('search')?.trim();
+    const minPriceParam = searchParams.get('minPrice')?.trim();
+    const maxPriceParam = searchParams.get('maxPrice')?.trim();
+    const minPrice = minPriceParam ? Number(minPriceParam) : undefined;
+    const maxPrice = maxPriceParam ? Number(maxPriceParam) : undefined;
+    const hasMinPrice = minPrice !== undefined && Number.isFinite(minPrice);
+    const hasMaxPrice = maxPrice !== undefined && Number.isFinite(maxPrice);
+    const sort = searchParams.get('sort')?.trim();
 
-    const query: { isActive: boolean; category?: string; vendor?: string } = { isActive: true };
+    const query: {
+      isActive: boolean;
+      category?: string;
+      vendor?: string;
+      price?: { $gte?: number; $lte?: number };
+      $or?: Array<{ title?: RegExp; description?: RegExp; category?: RegExp }>;
+    } = { isActive: true };
     if (category) query.category = category;
     if (vendor) query.vendor = vendor;
+    if (hasMinPrice || hasMaxPrice) {
+      query.price = {};
+      if (hasMinPrice) query.price.$gte = minPrice;
+      if (hasMaxPrice) query.price.$lte = maxPrice;
+    }
+    if (search) {
+      const searchRegex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      query.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+      ];
+    }
 
-    const products = await Product.find(query).populate('vendor', 'name vendorDetails.storeName');
-    return NextResponse.json({ products });
+    const sortOption: Record<string, SortOrder> =
+      sort === 'price-low'
+        ? { price: 1 }
+        : sort === 'price-high'
+          ? { price: -1 }
+          : sort === 'newest'
+            ? { createdAt: -1 }
+            : { createdAt: -1 };
+
+    const [products, categories] = await Promise.all([
+      Product.find(query).sort(sortOption).populate('vendor', 'name vendorDetails.storeName'),
+      Product.distinct('category', { isActive: true }),
+    ]);
+
+    return NextResponse.json({ products, categories: categories.filter(Boolean).sort() });
   } catch (error: unknown) {
     return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }
