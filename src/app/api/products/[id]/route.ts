@@ -21,6 +21,28 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Internal Server Error';
 }
 
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    if (!mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Invalid product id' }, { status: 400 });
+    }
+
+    await dbConnect();
+    const product = await Product.findOne({ _id: id, isActive: true })
+      .populate('vendor', 'name vendorDetails.storeName')
+      .lean();
+
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ product });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
+  }
+}
+
 async function uploadProductImage(imageFile: File) {
   const arrayBuffer = await imageFile.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);

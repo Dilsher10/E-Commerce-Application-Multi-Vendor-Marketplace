@@ -1,42 +1,87 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Star, ShieldCheck, Truck, ArrowLeft, Minus, Plus, ShoppingCart, Heart, Share2, Info } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { Star, ShieldCheck, Truck, ArrowLeft, Minus, Plus, ShoppingCart, Heart, Info, CheckCircle2 } from 'lucide-react';
+
+type Product = {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  images?: string[];
+  stock: number;
+  vendor?: {
+    name?: string;
+    vendorDetails?: {
+      storeName?: string;
+    };
+  };
+};
 
 export default function ProductDetails() {
+  const params = useParams<{ id: string }>();
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock product data
-  const product = {
-    id: 'PRD-001',
-    name: 'Quantum Pro Wireless Noise-Canceling Earbuds',
-    vendor: 'Audio Dynamics',
-    price: 149.99,
-    originalPrice: 199.99,
-    rating: 4.8,
-    reviews: 124,
-    description: 'Experience studio-quality sound with our next-generation wireless earbuds. Featuring active noise cancellation, 30-hour battery life, and crystal-clear calls thanks to our custom beamforming microphones.',
-    features: [
-      'Active Noise Cancellation (ANC)',
-      'Up to 30 hours of battery life with case',
-      'IPX4 water and sweat resistance',
-      'Bluetooth 5.3 for seamless connectivity',
-      'Custom EQ via companion app'
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1606220838315-056192d5e927?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1572569438062-cba6eb324a30?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?q=80&w=800&auto=format&fit=crop'
-    ]
-  };
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`/api/products/${params.id}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setProduct(data.product);
+        }
+      } catch {
+        console.error('Failed to fetch product');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchProduct();
+    }
+  }, [params.id]);
 
   const handleQuantity = (action: 'increase' | 'decrease') => {
-    if (action === 'increase' && quantity < 10) setQuantity(q => q + 1);
+    if (action === 'increase' && product && quantity < product.stock) setQuantity(q => q + 1);
     if (action === 'decrease' && quantity > 1) setQuantity(q => q - 1);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-[var(--bg-color)] min-h-screen py-8 animate-fade-in">
+        <div className="container">
+          <div className="bg-white rounded-3xl border border-[var(--border-color)] p-12 text-center">
+            <div className="loader mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="bg-[var(--bg-color)] min-h-screen py-8 animate-fade-in">
+        <div className="container">
+          <div className="bg-white rounded-3xl border border-[var(--border-color)] p-12 text-center">
+            <h1 className="text-2xl font-bold mb-3">Product not found</h1>
+            <p className="text-muted mb-6">This product is unavailable or no longer active.</p>
+            <Link href="/products" className="btn btn-primary px-6 py-3 rounded-full font-semibold">Browse Products</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const images = product.images?.length ? product.images : [];
+  const vendorName = product.vendor?.vendorDetails?.storeName || product.vendor?.name || 'Verified vendor';
 
   return (
     <div className="bg-[var(--bg-color)] min-h-screen py-8 animate-fade-in">
@@ -46,9 +91,9 @@ export default function ProductDetails() {
         <nav className="flex items-center gap-2 text-sm text-muted mb-8 font-medium">
           <Link href="/" className="hover:text-[var(--primary-color)] transition-colors flex items-center gap-1"><ArrowLeft size={14}/> Home</Link>
           <span>/</span>
-          <Link href="/products?category=audio" className="hover:text-[var(--primary-color)] transition-colors">Audio</Link>
+          <Link href={`/products?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--primary-color)] transition-colors">{product.category}</Link>
           <span>/</span>
-          <span className="text-[var(--text-main)] truncate max-w-[200px]">{product.name}</span>
+          <span className="text-[var(--text-main)] truncate max-w-[200px]">{product.title}</span>
         </nav>
 
         {/* Product Top Section */}
@@ -57,18 +102,22 @@ export default function ProductDetails() {
           {/* Left: Image Gallery */}
           <div className="w-full lg:w-1/2 p-6 md:p-10 border-b lg:border-b-0 lg:border-r border-[var(--border-color)] bg-gray-50/50">
             <div className="aspect-square bg-white rounded-2xl border border-[var(--border-color)] overflow-hidden mb-4 shadow-sm relative">
-              <img 
-                src={product.images[activeImage]} 
-                alt={product.name} 
-                className="w-full h-full object-contain p-8 mix-blend-multiply transition-opacity duration-300"
-              />
-              <span className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                Save 25%
-              </span>
+              {images[activeImage] ? (
+                <img 
+                  src={images[activeImage]} 
+                  alt={product.title} 
+                  className="w-full h-full object-contain p-8 mix-blend-multiply transition-opacity duration-300"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 font-semibold">
+                  No Image
+                </div>
+              )}
             </div>
             
+            {images.length > 1 && (
             <div className="grid grid-cols-4 gap-4">
-              {product.images.map((img, i) => (
+              {images.map((img, i) => (
                 <button 
                   key={i} 
                   onClick={() => setActiveImage(i)}
@@ -78,30 +127,30 @@ export default function ProductDetails() {
                 </button>
               ))}
             </div>
+            )}
           </div>
 
           {/* Right: Product Details */}
           <div className="w-full lg:w-1/2 p-6 md:p-10 flex flex-col">
             <div className="mb-2 text-sm font-bold text-[var(--primary-color)] flex items-center gap-1 uppercase tracking-wider">
-               Sold by: <Link href="#" className="hover:underline">{product.vendor}</Link>
+               Sold by: <span>{vendorName}</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--text-main)] mb-4 leading-tight">
-              {product.name}
+              {product.title}
             </h1>
             
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-1 rounded-lg border border-yellow-200">
                 <Star size={16} fill="#ca8a04" stroke="#ca8a04" />
-                <span className="font-bold text-sm">{product.rating}</span>
+                <span className="font-bold text-sm">Active listing</span>
               </div>
-              <span className="text-sm font-medium text-[var(--primary-color)] hover:underline cursor-pointer">
-                See all {product.reviews} reviews
+              <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
               </span>
             </div>
 
             <div className="mb-6 flex items-end gap-3">
               <span className="text-4xl font-black text-[var(--text-main)]">${product.price.toFixed(2)}</span>
-              <span className="text-lg text-muted line-through mb-1">${product.originalPrice.toFixed(2)}</span>
             </div>
 
             <p className="text-gray-600 mb-8 leading-relaxed">
@@ -124,7 +173,7 @@ export default function ProductDetails() {
                   </button>
                 </div>
 
-                <button className="flex-1 bg-[var(--primary-color)] text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--primary-hover)] transition-colors shadow-lg shadow-blue-500/30">
+                <button disabled={product.stock === 0} className="flex-1 bg-[var(--primary-color)] text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[var(--primary-hover)] disabled:bg-gray-300 disabled:shadow-none transition-colors shadow-lg shadow-blue-500/30">
                   <ShoppingCart size={20} />
                   Add to Cart
                 </button>
@@ -157,10 +206,14 @@ export default function ProductDetails() {
         {/* Bottom Details Section */}
         <div className="bg-white rounded-3xl border border-[var(--border-color)] shadow-sm p-6 md:p-10 mb-20">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Info className="text-[var(--primary-color)]" /> Product Features
+            <Info className="text-[var(--primary-color)]" /> Product Details
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-            {product.features.map((feature, idx) => (
+            {[
+              `Category: ${product.category}`,
+              `Sold by: ${vendorName}`,
+              product.stock > 0 ? `${product.stock} units available` : 'Currently out of stock',
+            ].map((feature, idx) => (
               <div key={idx} className="flex items-start gap-3 border-b border-[var(--border-color)] pb-4">
                 <CheckCircle2 className="text-green-500 mt-0.5 flex-shrink-0" size={20} />
                 <span className="text-gray-700 font-medium">{feature}</span>

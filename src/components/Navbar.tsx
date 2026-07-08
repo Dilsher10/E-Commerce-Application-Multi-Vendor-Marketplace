@@ -17,24 +17,7 @@ export default function Navbar() {
 
   return (
     <div className="flex flex-col relative z-50 sticky top-0">
-      {/* Topbar: Language, Currency, Quick Links */}
-      <div className="bg-[var(--secondary-color)] text-white text-xs py-2 hidden md:block">
-        <div className="container flex justify-between items-center">
-          <div className="flex gap-4 opacity-80">
-            <Link href="#" className="hover:opacity-100 transition-opacity">About Us</Link>
-            <Link href="#" className="hover:opacity-100 transition-opacity">Order Tracking</Link>
-            <Link href="#" className="hover:opacity-100 transition-opacity">Help Center</Link>
-          </div>
-          <div className="flex gap-6 items-center">
-            <button className="flex items-center gap-1 opacity-80 hover:opacity-100 transition-opacity">
-              <Globe size={14} /> English <ChevronDown size={12} />
-            </button>
-            <button className="flex items-center gap-1 opacity-80 hover:opacity-100 transition-opacity">
-              USD ($) <ChevronDown size={12} />
-            </button>
-          </div>
-        </div>
-      </div>
+
 
       {/* Main Header */}
       <header className="bg-white/85 backdrop-blur-xl border-b border-[var(--border-color)] shadow-sm relative z-40">
@@ -53,9 +36,6 @@ export default function Navbar() {
 
             {/* Powerful Search Bar */}
             <div className="hidden md:flex flex-1 max-w-2xl relative group">
-              <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center pl-4">
-                <Search size={18} className="text-muted group-focus-within:text-[var(--primary-color)] transition-colors" />
-              </div>
               <input 
                 type="text" 
                 placeholder="Search products, brands, categories..." 

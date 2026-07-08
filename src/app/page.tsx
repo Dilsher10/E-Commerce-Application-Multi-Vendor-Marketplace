@@ -1,34 +1,136 @@
 import Link from 'next/link';
 import { ShoppingBag, Zap, Shield, Headphones, Monitor, Watch, Smartphone, Star, ArrowRight, Truck, Gift } from 'lucide-react';
+import dbConnect from '@/lib/db';
+import { Product } from '@/models/Product';
 
-export default function Home() {
-  const featuredProducts = [
-    { id: 1, name: 'Quantum Pro Wireless Earbuds', price: 149.99, rating: 4.8, reviews: 124, category: 'Audio', image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=600&auto=format&fit=crop' },
-    { id: 2, name: 'AeroBook Ultra 14" Laptop', price: 1299.00, rating: 4.9, reviews: 89, category: 'Laptops', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=600&auto=format&fit=crop' },
-    { id: 3, name: 'Horizon Smartwatch Series 5', price: 299.50, rating: 4.7, reviews: 210, category: 'Wearables', image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=600&auto=format&fit=crop' },
-    { id: 4, name: 'Nexus 4K Creator Monitor', price: 499.00, rating: 4.6, reviews: 45, category: 'Displays', image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600&auto=format&fit=crop' },
-  ];
+type HomeProduct = {
+  id: string;
+  title: string;
+  price: number;
+  category: string;
+  image?: string;
+  stock: number;
+  vendorName: string;
+};
 
-  const bestSellers = [
-    { id: 9, name: 'Echo Plus Smart Speaker', price: 99.99, rating: 4.9, reviews: 3420, category: 'Smart Home', image: 'https://images.unsplash.com/photo-1543512214-318c7553f230?q=80&w=600&auto=format&fit=crop' },
-    { id: 10, name: 'ProCam X1 Action Camera', price: 249.00, rating: 4.7, reviews: 890, category: 'Cameras', image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=600&auto=format&fit=crop' },
-    { id: 11, name: 'Zenith Noise-Canceling Over-Ear', price: 199.50, rating: 4.8, reviews: 1205, category: 'Audio', image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=600&auto=format&fit=crop' },
-    { id: 12, name: 'NovaLite 10,000mAh Powerbank', price: 39.99, rating: 4.6, reviews: 540, category: 'Accessories', image: 'https://images.unsplash.com/photo-1609091839311-d5365f47d8eb?q=80&w=600&auto=format&fit=crop' },
-  ];
+type CategorySummary = {
+  name: string;
+  count: number;
+  icon: typeof Headphones;
+  color: string;
+};
 
-  const newArrivals = [
-    { id: 5, name: 'Lumina Smart Ring Gen 2', price: 199.99, rating: 4.5, reviews: 32, category: 'Wearables', image: 'https://images.unsplash.com/photo-1599814474771-36f78fec1db7?q=80&w=600&auto=format&fit=crop' },
-    { id: 6, name: 'Vortex Mechanical Keyboard', price: 129.50, rating: 4.9, reviews: 156, category: 'Accessories', image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?q=80&w=600&auto=format&fit=crop' },
-    { id: 7, name: 'Aero 8K Drone w/ Controller', price: 899.00, rating: 4.8, reviews: 41, category: 'Cameras', image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=600&auto=format&fit=crop' },
-    { id: 8, name: 'SoundScape Desk Speakers', price: 249.99, rating: 4.7, reviews: 89, category: 'Audio', image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=600&auto=format&fit=crop' },
-  ];
+type ProductDocument = {
+  _id: unknown;
+  title: string;
+  price: number;
+  category: string;
+  images?: string[];
+  stock?: number;
+  vendor?: {
+    name?: string;
+    vendorDetails?: {
+      storeName?: string;
+    };
+  };
+};
 
-  const categories = [
-    { name: 'Audio', icon: Headphones, count: '1,240 items', color: 'bg-blue-100 text-blue-600' },
-    { name: 'Displays', icon: Monitor, count: '342 items', color: 'bg-purple-100 text-purple-600' },
-    { name: 'Wearables', icon: Watch, count: '590 items', color: 'bg-orange-100 text-orange-600' },
-    { name: 'Phones', icon: Smartphone, count: '890 items', color: 'bg-green-100 text-green-600' },
-  ];
+const categoryStyles = [
+  { icon: Headphones, color: 'bg-blue-100 text-blue-600' },
+  { icon: Monitor, color: 'bg-purple-100 text-purple-600' },
+  { icon: Watch, color: 'bg-orange-100 text-orange-600' },
+  { icon: Smartphone, color: 'bg-green-100 text-green-600' },
+];
+
+function formatCount(count: number) {
+  return `${count.toLocaleString()} ${count === 1 ? 'item' : 'items'}`;
+}
+
+function serializeProduct(product: ProductDocument): HomeProduct {
+  return {
+    id: String(product._id),
+    title: product.title,
+    price: product.price,
+    category: product.category,
+    image: product.images?.[0],
+    stock: product.stock ?? 0,
+    vendorName: product.vendor?.vendorDetails?.storeName || product.vendor?.name || 'Verified vendor',
+  };
+}
+
+async function getHomepageData() {
+  await dbConnect();
+
+  const [latestProducts, categoryCounts] = await Promise.all([
+    Product.find({ isActive: true })
+      .select('title price category images stock vendor createdAt')
+      .populate('vendor', 'name vendorDetails.storeName')
+      .sort({ createdAt: -1 })
+      .limit(12)
+      .lean<ProductDocument[]>(),
+    Product.aggregate<{ _id: string; count: number }>([
+      { $match: { isActive: true } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { count: -1, _id: 1 } },
+      { $limit: 4 },
+    ]),
+  ]);
+
+  const products = latestProducts.map(serializeProduct);
+  const categories: CategorySummary[] = categoryCounts.map((category, index) => ({
+    name: category._id,
+    count: category.count,
+    ...categoryStyles[index % categoryStyles.length],
+  }));
+
+  return {
+    featuredProducts: products.slice(0, 4),
+    newArrivals: products.slice(4, 8),
+    bestSellers: products.slice(8, 12),
+    fallbackProducts: products.slice(0, 4),
+    categories,
+  };
+}
+
+function ProductCard({ product, badge }: { product: HomeProduct; badge?: string }) {
+  return (
+    <Link href={`/products/${product.id}`} className="bg-white rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+      <div className="relative h-64 overflow-hidden bg-gray-50 p-4 flex items-center justify-center">
+        {product.image ? (
+          <img src={product.image} alt={product.title} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full rounded-xl bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-400">
+            No Image
+          </div>
+        )}
+        <div className="absolute top-4 left-4">
+          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-[var(--text-main)] text-xs font-bold rounded-full shadow-sm">
+            {badge || product.category}
+          </span>
+        </div>
+      </div>
+      <div className="p-8 flex flex-col flex-grow">
+        <h3 className="text-base font-bold line-clamp-2 leading-snug mb-3">{product.title}</h3>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <span className="text-xs text-muted truncate">By {product.vendorName}</span>
+          <span className={`text-xs font-semibold ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+          </span>
+        </div>
+
+        <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
+          <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
+          <span className="w-10 h-10 rounded-full bg-[var(--bg-color)] flex items-center justify-center group-hover:bg-[var(--primary-color)] group-hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
+            <ShoppingBag size={18} />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export default async function Home() {
+  const { featuredProducts, newArrivals, bestSellers, fallbackProducts, categories } = await getHomepageData();
 
   return (
     <div className="animate-fade-in bg-[var(--bg-color)] flex flex-col gap-8 md:gap-16 pb-16">
@@ -121,13 +223,29 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold m-0 group-hover:text-[var(--primary-color)] transition-colors">{cat.name}</h3>
-                  <p className="text-xs text-muted m-0 mt-1">{cat.count}</p>
+                  <p className="text-xs text-muted m-0 mt-1">{formatCount(cat.count)}</p>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
+
+      {fallbackProducts.length === 0 ? (
+        <section className="py-20 bg-white border border-[var(--border-color)]">
+          <div className="container">
+            <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-color)] p-12 text-center">
+              <ShoppingBag size={36} className="mx-auto text-muted mb-4" />
+              <h2 className="text-2xl font-bold mb-2">No active products yet</h2>
+              <p className="text-muted mb-6">Products added by approved vendors will appear here automatically.</p>
+              <Link href="/vendor/register" className="btn btn-primary px-6 py-3 rounded-full font-semibold">
+                Become a Vendor
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
 
       {/* Trending Products Grid */}
       <section className="py-20 bg-white border border-[var(--border-color)]">
@@ -141,33 +259,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="bg-white rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
-                <div className="relative h-64 overflow-hidden bg-gray-50 p-4 flex items-center justify-center">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-[var(--text-main)] text-xs font-bold rounded-full shadow-sm">
-                      {product.category}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-base font-bold line-clamp-2 leading-snug">{product.name}</h3>
-                  </div>
-                  <div className="flex items-center gap-1 mb-4">
-                    <Star size={14} fill="#fbbf24" stroke="#fbbf24" />
-                    <span className="text-sm font-bold">{product.rating}</span>
-                    <span className="text-xs text-muted">({product.reviews})</span>
-                  </div>
-                  
-                  <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
-                    <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
-                    <button className="w-10 h-10 rounded-full bg-[var(--bg-color)] flex items-center justify-center hover:bg-[var(--primary-color)] hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
-                      <ShoppingBag size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -188,34 +280,8 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivals.map((product) => (
-              <div key={product.id} className="bg-[var(--bg-color)] rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div className="relative h-64 overflow-hidden bg-white p-4 flex items-center justify-center">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-[var(--secondary-color)] text-white text-xs font-bold rounded-full shadow-sm">
-                      New
-                    </span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-base font-bold line-clamp-2 leading-snug">{product.name}</h3>
-                  </div>
-                  <div className="flex items-center gap-1 mb-4">
-                    <Star size={14} fill="#fbbf24" stroke="#fbbf24" />
-                    <span className="text-sm font-bold">{product.rating}</span>
-                    <span className="text-xs text-muted">({product.reviews})</span>
-                  </div>
-                  
-                  <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
-                    <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
-                    <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-[var(--primary-color)] hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
-                      <ShoppingBag size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {(newArrivals.length > 0 ? newArrivals : fallbackProducts).map((product) => (
+              <ProductCard key={product.id} product={product} badge="New" />
             ))}
           </div>
         </div>
@@ -233,45 +299,21 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestSellers.map((product) => (
-              <div key={product.id} className="bg-white rounded-2xl border border-[var(--border-color)] p-0 overflow-hidden group flex flex-col hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
-                <div className="relative h-64 overflow-hidden bg-gray-50 p-4 flex items-center justify-center">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm">
-                      Hot
-                    </span>
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-base font-bold line-clamp-2 leading-snug">{product.name}</h3>
-                  </div>
-                  <div className="flex items-center gap-1 mb-4">
-                    <Star size={14} fill="#fbbf24" stroke="#fbbf24" />
-                    <span className="text-sm font-bold">{product.rating}</span>
-                    <span className="text-xs text-muted">({product.reviews})</span>
-                  </div>
-                  
-                  <div className="mt-auto flex justify-between items-center pt-4 border-t border-[var(--border-color)]">
-                    <span className="text-xl font-extrabold">${product.price.toFixed(2)}</span>
-                    <button className="w-10 h-10 rounded-full bg-[var(--bg-color)] flex items-center justify-center hover:bg-[var(--primary-color)] hover:text-white transition-colors border border-[var(--border-color)] shadow-sm">
-                      <ShoppingBag size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {(bestSellers.length > 0 ? bestSellers : fallbackProducts).map((product) => (
+              <ProductCard key={product.id} product={product} badge="Available" />
             ))}
           </div>
         </div>
       </section>
+        </>
+      )}
 
       {/* Customer Reviews */}
       <section className="py-20 bg-[var(--secondary-color)] text-white overflow-hidden shadow-2xl">
         <div className="container relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-bold mb-4 text-white">What Our Customers Say</h2>
-            <p className="text-gray-300">Don't just take our word for it. Join millions of satisfied buyers globally.</p>
+            <p className="text-gray-300">Do not just take our word for it. Join millions of satisfied buyers globally.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -284,7 +326,7 @@ export default function Home() {
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, j) => <Star key={j} size={16} fill="#fbbf24" stroke="#fbbf24" />)}
                 </div>
-                <p className="text-gray-200 mb-8 italic">"{review.text}"</p>
+                <p className="text-gray-200 mb-8 italic">{review.text}</p>
                 <div className="flex items-center gap-4 mt-auto">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center font-bold text-lg">
                     {review.name.charAt(0)}
