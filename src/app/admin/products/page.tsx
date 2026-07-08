@@ -4,6 +4,7 @@ import Link from 'next/link';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
 import { User } from '@/models/User';
+import { Category } from '@/models/Category';
 import AdminProductFilters from '@/components/AdminProductFilters';
 
 type AdminProduct = {
@@ -92,18 +93,21 @@ async function getProductData(filters: ProductFilters) {
   await dbConnect();
   const query = buildProductQuery(filters);
 
-  const [products, allProducts, vendors] = await Promise.all([
+  const [products, storedCategories, allProducts, vendors] = await Promise.all([
     Product.find(query)
       .populate('vendor', 'name vendorDetails.storeName')
       .sort({ createdAt: -1 })
       .lean(),
+    Category.find({}).select('name').sort({ name: 1 }).lean(),
     Product.find({}).select('category').lean(),
     User.find({ role: 'vendor' }).select('name vendorDetails.storeName').sort({ name: 1 }).lean(),
   ]);
+  const productCategories = (allProducts as Array<{ category?: string }>).flatMap((product) => product.category ? [product.category] : []);
+  const categoryNames = (storedCategories as Array<{ name?: string }>).flatMap((category) => category.name ? [category.name] : []);
 
   return {
     products: products as unknown as AdminProduct[],
-    categories: Array.from(new Set((allProducts as Array<{ category?: string }>).map((product) => product.category).filter(Boolean))).sort(),
+    categories: Array.from(new Set([...categoryNames, ...productCategories])).sort(),
     vendors: vendors as unknown as AdminVendorFilter[],
   };
 }

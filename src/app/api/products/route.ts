@@ -3,6 +3,7 @@ import type { UploadApiResponse } from 'cloudinary';
 import type { SortOrder } from 'mongoose';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
+import { Category } from '@/models/Category';
 import { getUserFromRequest } from '@/lib/auth';
 import cloudinary from '@/lib/cloudinary';
 
@@ -68,12 +69,17 @@ export async function GET(req: NextRequest) {
             ? { createdAt: -1 }
             : { createdAt: -1 };
 
-    const [products, categories] = await Promise.all([
+    const [products, storedCategories, productCategories] = await Promise.all([
       Product.find(query).sort(sortOption).populate('vendor', 'name vendorDetails.storeName'),
+      Category.find({ isActive: true }).select('name').sort({ name: 1 }).lean(),
       Product.distinct('category', { isActive: true }),
     ]);
+    const categories = Array.from(new Set([
+      ...storedCategories.map((storedCategory) => storedCategory.name),
+      ...productCategories.filter((productCategory): productCategory is string => Boolean(productCategory)),
+    ])).sort();
 
-    return NextResponse.json({ products, categories: categories.filter(Boolean).sort() });
+    return NextResponse.json({ products, categories });
   } catch (error: unknown) {
     return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }

@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, Package, Settings, ShoppingCart, Users } from 'lucide-react';
+import { LayoutDashboard, Package, Settings, ShoppingCart, Tags, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/categories', label: 'Categories', icon: Tags },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart, badge: '' },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/settings', label: 'Settings', icon: Settings, pushBottom: true },

@@ -5,15 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ImagePlus, Save } from 'lucide-react';
 
-const categories = [
-  'Electronics & Tech',
-  'Fashion & Apparel',
-  'Home & Living',
-  'Health & Beauty',
-  'Sports & Outdoors',
-  'Other',
-];
-
 type EditableProduct = {
   id: string;
   title: string;
@@ -25,7 +16,13 @@ type EditableProduct = {
   imageUrl?: string;
 };
 
-export default function VendorProductEditForm({ product }: { product: EditableProduct }) {
+export default function VendorProductEditForm({
+  product,
+  categories,
+}: {
+  product: EditableProduct;
+  categories: string[];
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -106,6 +103,9 @@ export default function VendorProductEditForm({ product }: { product: EditablePr
                 Category
               </label>
               <select id="category" name="category" defaultValue={product.category} required>
+                {!categories.includes(product.category) && (
+                  <option value={product.category}>{product.category}</option>
+                )}
                 {categories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}

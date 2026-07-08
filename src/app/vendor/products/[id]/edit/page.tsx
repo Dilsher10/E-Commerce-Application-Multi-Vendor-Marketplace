@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 import { Product } from '@/models/Product';
+import { Category } from '@/models/Category';
 import VendorProductEditForm from '@/components/VendorProductEditForm';
 
 type VendorSession = {
@@ -35,6 +36,19 @@ async function getProduct(productId: string, vendorId: string) {
   return product as unknown as EditableProductDocument | null;
 }
 
+async function getCategories() {
+  await dbConnect();
+  const [storedCategories, productCategories] = await Promise.all([
+    Category.find({ isActive: true }).select('name').sort({ name: 1 }).lean(),
+    Product.distinct('category', { isActive: true }),
+  ]);
+
+  return Array.from(new Set([
+    ...storedCategories.flatMap((category) => category.name ? [category.name] : []),
+    ...productCategories.filter((category): category is string => Boolean(category)),
+  ])).sort();
+}
+
 export default async function VendorProductEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const cookieStore = await cookies();
@@ -45,9 +59,11 @@ export default async function VendorProductEditPage({ params }: { params: Promis
 
   const product = await getProduct(id, session.id);
   if (!product) notFound();
+  const categories = await getCategories();
 
   return (
     <VendorProductEditForm
+      categories={categories}
       product={{
         id: product._id.toString(),
         title: product.title,
