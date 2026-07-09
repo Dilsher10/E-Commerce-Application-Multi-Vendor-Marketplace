@@ -75,7 +75,7 @@ export default function CategorySlider({ categories }: { categories: CategoryIte
       <div className="overflow-hidden">
         <div
           ref={trackRef}
-          className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {categories.map((category, index) => {
             const style = categoryStyles[index % categoryStyles.length];
