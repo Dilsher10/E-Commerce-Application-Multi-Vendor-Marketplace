@@ -1,17 +1,19 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { useMemo, useState } from 'react';
 
 const brands = ['Apple', 'Samsung', 'Sony', 'Bose', 'DJI', 'Logitech', 'Canon', 'Microsoft'];
+type SliderStyle = CSSProperties & {
+  '--brand-index': number;
+};
 
 export default function BrandSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const visibleBrands = useMemo(
-    () => brands.map((brand, index) => brands[(activeIndex + index) % brands.length]),
-    [activeIndex]
-  );
+  const sliderBrands = useMemo(() => [...brands, ...brands.slice(0, 4)], []);
+  const sliderStyle: SliderStyle = { '--brand-index': activeIndex };
 
   function goToPrevious() {
     setActiveIndex((current) => (current - 1 + brands.length) % brands.length);
@@ -48,11 +50,14 @@ export default function BrandSlider() {
       </div>
 
       <div className="overflow-hidden">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {visibleBrands.slice(0, 4).map((brand) => (
+        <div
+          className="flex gap-4 transition-transform duration-500 ease-out [--brand-card-size:calc((100%-1rem)/2)] [transform:translateX(calc(var(--brand-index)*-1*(var(--brand-card-size)+1rem)))] sm:[--brand-card-size:calc((100%-2rem)/3)] lg:[--brand-card-size:calc((100%-3rem)/4)]"
+          style={sliderStyle}
+        >
+          {sliderBrands.map((brand, index) => (
             <div
-              key={brand}
-              className="h-24 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-normal grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-[var(--primary-color)] transition-all duration-300"
+              key={`${brand}-${index}`}
+              className="h-24 flex-none basis-[var(--brand-card-size)] rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-normal grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-[var(--primary-color)] transition-all duration-300"
             >
               {brand}
             </div>
