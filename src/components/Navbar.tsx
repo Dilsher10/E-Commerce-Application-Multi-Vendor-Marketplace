@@ -30,9 +30,6 @@ export default function Navbar() {
 
             {/* Powerful Search Bar */}
             <div className="hidden md:flex flex-1 max-w-2xl relative group">
-              <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center pl-4">
-                <Search size={18} className="text-muted group-focus-within:text-[var(--primary-color)] transition-colors" />
-              </div>
               <input 
                 type="text" 
                 placeholder="Search products, brands, categories..." 
