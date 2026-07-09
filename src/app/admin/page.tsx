@@ -209,14 +209,6 @@ export default async function AdminDashboard() {
           <h1 className="text-3xl font-extrabold text-[var(--text-main)] m-0">Dashboard Overview</h1>
           <p className="text-muted mt-1 text-sm">Live marketplace performance from products, orders, vendors, and users.</p>
         </div>
-        <div className="flex gap-3">
-          <Link href="/admin/orders" className="bg-white border border-[var(--border-color)] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors">
-            View Orders
-          </Link>
-          <Link href="/admin/products" className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--primary-hover)] transition-colors">
-            View Products
-          </Link>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
