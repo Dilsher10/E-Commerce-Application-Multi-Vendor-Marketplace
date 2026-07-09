@@ -84,29 +84,6 @@ export default function Navbar() {
           </div>
         </div>
       </header>
-
-      {/* Bottom Navigation (Mega Menu Trigger Area) */}
-      <div className="bg-white/95 backdrop-blur-md border-b border-[var(--border-color)] hidden md:block">
-        <div className="container flex items-center gap-8 py-3">
-          <button className="flex items-center gap-2 bg-[var(--primary-color)] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[var(--primary-hover)] transition-colors">
-            <Menu size={18} /> All Categories
-          </button>
-          
-          <nav className="flex items-center gap-6 flex-1 text-sm font-medium text-[var(--text-main)]">
-            <Link href="/products?category=deals" className="hover:text-[var(--primary-color)] transition-colors flex items-center gap-1 text-[var(--danger)]">
-               Top Deals
-            </Link>
-            <Link href="/products?category=electronics" className="hover:text-[var(--primary-color)] transition-colors">Electronics</Link>
-            <Link href="/products?category=smart-home" className="hover:text-[var(--primary-color)] transition-colors">Smart Home</Link>
-            <Link href="/products?category=laptops" className="hover:text-[var(--primary-color)] transition-colors">Laptops</Link>
-            <Link href="/vendor/register" className="hover:text-[var(--primary-color)] transition-colors">Become a Vendor</Link>
-          </nav>
-          
-          <div className="text-sm font-medium flex items-center gap-2 text-muted">
-             Need Help? <a href="tel:1-800-123-4567" className="text-[var(--primary-color)] font-bold">1-800-LUMINA</a>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
