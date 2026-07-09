@@ -2,12 +2,49 @@
 
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { ShoppingCart, User, Search, Store, Heart, Bell, ChevronDown, Menu } from 'lucide-react';
+import { ShoppingCart, User, Store, Heart, Bell, ChevronDown } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+type StoredUser = {
+  name?: string;
+  role?: 'user' | 'vendor' | 'admin';
+};
 
 export default function Navbar() {
   const { cart, wishlist, cartTotal } = useCart();
+  const [user, setUser] = useState<StoredUser | null>(null);
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+  const accountHref = user?.role === 'admin'
+    ? '/admin'
+    : user?.role === 'vendor'
+      ? '/vendor/dashboard'
+      : user
+        ? '/orders'
+        : '/auth/login';
+  const displayName = user?.name?.trim() || 'My Account';
+
+  useEffect(() => {
+    function loadUser() {
+      const savedUser = localStorage.getItem('user');
+
+      if (!savedUser) {
+        setUser(null);
+        return;
+      }
+
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {
+        setUser(null);
+      }
+    }
+
+    loadUser();
+    window.addEventListener('storage', loadUser);
+
+    return () => window.removeEventListener('storage', loadUser);
+  }, []);
 
   return (
     <div className="flex flex-col relative z-50 sticky top-0">
@@ -73,11 +110,13 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              <Link href="/auth/login" className="flex items-center gap-2 p-2 sm:px-4 sm:py-2.5 rounded-full hover:bg-[var(--bg-surface-hover)] transition-all border border-transparent hover:border-[var(--border-color)] cursor-pointer">
+              <Link href={accountHref} className="flex items-center gap-2 p-2 sm:px-4 sm:py-2.5 rounded-full hover:bg-[var(--bg-surface-hover)] transition-all border border-transparent hover:border-[var(--border-color)] cursor-pointer">
                 <User size={20} className="text-[var(--text-main)]" />
                 <div className="hidden lg:flex flex-col items-start">
-                  <span className="text-[10px] text-muted leading-tight">Hello, Sign In</span>
-                  <span className="text-sm font-bold leading-tight flex items-center gap-1">My Account <ChevronDown size={12}/></span>
+                  <span className="text-[10px] text-muted leading-tight">{user ? 'Hello,' : 'Hello, Sign In'}</span>
+                  <span className="text-sm font-bold leading-tight flex items-center gap-1 max-w-32 truncate">
+                    {user ? displayName : 'My Account'} <ChevronDown size={12} className="flex-shrink-0" />
+                  </span>
                 </div>
               </Link>
             </nav>
