@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { ShoppingBag, Zap, Shield, Headphones, Monitor, Watch, Smartphone, Star, ArrowRight, Truck, Gift } from 'lucide-react';
+import { ShoppingBag, Zap, Shield, Smartphone, Star, ArrowRight, Truck, Gift } from 'lucide-react';
 import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
 import { Category } from '@/models/Category';
 import ProductCardActions from '@/components/ProductCardActions';
 import BrandSlider from '@/components/BrandSlider';
+import CategorySlider from '@/components/CategorySlider';
 
 type HomeProduct = {
   id: string;
@@ -20,8 +21,6 @@ type HomeProduct = {
 type CategorySummary = {
   name: string;
   count: number;
-  icon: typeof Headphones;
-  color: string;
 };
 
 type ProductDocument = {
@@ -43,17 +42,6 @@ type ProductDocument = {
 type CategoryDocument = {
   name: string;
 };
-
-const categoryStyles = [
-  { icon: Headphones, color: 'bg-blue-100 text-blue-600' },
-  { icon: Monitor, color: 'bg-purple-100 text-purple-600' },
-  { icon: Watch, color: 'bg-orange-100 text-orange-600' },
-  { icon: Smartphone, color: 'bg-green-100 text-green-600' },
-];
-
-function formatCount(count: number) {
-  return `${count.toLocaleString()} ${count === 1 ? 'item' : 'items'}`;
-}
 
 function serializeProduct(product: ProductDocument): HomeProduct {
   return {
@@ -91,10 +79,9 @@ async function getHomepageData() {
   const categoryNames = adminCategories.length > 0
     ? adminCategories.map((category) => category.name)
     : categoryCounts.map((category) => category._id);
-  const categories: CategorySummary[] = categoryNames.map((categoryName, index) => ({
+  const categories: CategorySummary[] = categoryNames.map((categoryName) => ({
     name: categoryName,
     count: countByCategory.get(categoryName) || 0,
-    ...categoryStyles[index % categoryStyles.length],
   }));
 
   return {
@@ -217,24 +204,7 @@ export default async function Home() {
       {/* Modern Categories */}
       <section className="py-14 bg-white border border-[var(--border-color)]">
         <div className="container">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold m-0">Explore Categories</h2>
-            <Link href="/products" className="text-[var(--primary-color)] font-semibold text-sm hover:underline">See All</Link>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {categories.map((cat, i) => (
-              <Link href={`/products?category=${encodeURIComponent(cat.name)}`} key={i} className="flex items-center gap-6 p-8 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-color)] hover:bg-white hover:border-[var(--primary-color)] transition-all group shadow-sm hover:shadow-md">
-                <div className={`w-16 h-16 rounded-xl ${cat.color} flex items-center justify-center flex-shrink-0`}>
-                  <cat.icon size={24} />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold m-0 group-hover:text-[var(--primary-color)] transition-colors">{cat.name}</h3>
-                  <p className="text-xs text-muted m-0 mt-1">{formatCount(cat.count)}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <CategorySlider categories={categories} />
         </div>
       </section>
 

@@ -1,26 +1,29 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { CSSProperties } from 'react';
-import { useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const brands = ['Apple', 'Samsung', 'Sony', 'Bose', 'DJI', 'Logitech', 'Canon', 'Microsoft'];
-type SliderStyle = CSSProperties & {
-  '--brand-index': number;
-};
 
 export default function BrandSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const sliderBrands = useMemo(() => [...brands, ...brands.slice(0, 4)], []);
-  const sliderStyle: SliderStyle = { '--brand-index': activeIndex };
+  function scrollToBrand(index: number) {
+    setActiveIndex(index);
+    trackRef.current?.children[index]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'start',
+    });
+  }
 
   function goToPrevious() {
-    setActiveIndex((current) => (current - 1 + brands.length) % brands.length);
+    scrollToBrand((activeIndex - 1 + brands.length) % brands.length);
   }
 
   function goToNext() {
-    setActiveIndex((current) => (current + 1) % brands.length);
+    scrollToBrand((activeIndex + 1) % brands.length);
   }
 
   return (
@@ -51,13 +54,13 @@ export default function BrandSlider() {
 
       <div className="overflow-hidden">
         <div
-          className="flex gap-4 transition-transform duration-500 ease-out [--brand-card-size:calc((100%-1rem)/2)] [transform:translateX(calc(var(--brand-index)*-1*(var(--brand-card-size)+1rem)))] sm:[--brand-card-size:calc((100%-2rem)/3)] lg:[--brand-card-size:calc((100%-3rem)/4)]"
-          style={sliderStyle}
+          ref={trackRef}
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {sliderBrands.map((brand, index) => (
+          {brands.map((brand) => (
             <div
-              key={`${brand}-${index}`}
-              className="h-24 flex-none basis-[var(--brand-card-size)] rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-normal grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-[var(--primary-color)] transition-all duration-300"
+              key={brand}
+              className="h-24 flex-none basis-[calc((100%_-_1rem)_/_2)] snap-start rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] flex items-center justify-center text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-normal grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-[var(--primary-color)] transition-all duration-300 sm:basis-[calc((100%_-_2rem)_/_3)] lg:basis-[calc((100%_-_3rem)_/_4)]"
             >
               {brand}
             </div>
@@ -70,7 +73,7 @@ export default function BrandSlider() {
           <button
             key={brand}
             type="button"
-            onClick={() => setActiveIndex(index)}
+            onClick={() => scrollToBrand(index)}
             className={`h-2.5 rounded-full transition-all ${activeIndex === index ? 'w-8 bg-[var(--primary-color)]' : 'w-2.5 bg-gray-300 hover:bg-gray-400'}`}
             aria-label={`Show ${brand}`}
             aria-current={activeIndex === index ? 'true' : undefined}
