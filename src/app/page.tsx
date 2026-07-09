@@ -163,7 +163,7 @@ export default async function Home() {
             <div className="flex flex-col gap-6 h-auto md:h-full">
               
               {/* Promo Bento */}
-              <div className="flex-1 rounded-3xl overflow-hidden relative border border-[var(--border-color)] p-8 flex flex-col justify-center min-h-[200px] group bg-[var(--primary-color)]">
+              <div className="promoCard flex-1 rounded-3xl overflow-hidden relative border border-[var(--border-color)] p-8 flex flex-col justify-center min-h-[200px] group bg-[var(--primary-color)]">
                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] opacity-90 z-0 group-hover:scale-105 transition-transform duration-700"></div>
                 <div className="relative z-10 text-white">
                   <Zap size={32} className="mb-4 text-white" />

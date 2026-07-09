@@ -288,12 +288,20 @@ main {
   color: #fff !important;
 }
 
-.search{
+.search {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
 
-.addToCartBtn{
+.addToCartBtn {
   background-color: var(--primary-color);
+}
+
+.promoCard h3 {
+  color: #fff;
+}
+
+.promoCard p {
+  color: #fff;
 }
