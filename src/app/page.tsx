@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db';
 import { Product } from '@/models/Product';
 import { Category } from '@/models/Category';
 import ProductCardActions from '@/components/ProductCardActions';
+import BrandSlider from '@/components/BrandSlider';
 
 type HomeProduct = {
   id: string;
@@ -209,14 +210,7 @@ export default async function Home() {
       {/* Featured Brands */}
       <section className="py-12 bg-white border border-[var(--border-color)]">
         <div className="container">
-          <p className="text-center text-sm font-semibold text-muted uppercase tracking-wider mb-8">Trusted by global leading brands</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            {['Apple', 'Samsung', 'Sony', 'Bose', 'DJI', 'Logitech'].map((brand, i) => (
-              <div key={i} className="text-xl md:text-2xl font-black text-[var(--secondary-color)] tracking-tighter">
-                {brand}
-              </div>
-            ))}
-          </div>
+          <BrandSlider />
         </div>
       </section>
 
