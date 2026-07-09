@@ -84,12 +84,11 @@ export default function ProductsPage() {
 
   return (
     <div className="bg-[var(--bg-color)] min-h-screen pb-16">
-      
       {/* Page Header */}
       <div className="bg-white border-b border-[var(--border-color)]">
         <div className="container py-8 md:py-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">All Products</h1>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 mt-8">All Products</h1>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
             <p className="text-muted m-0">Showing {products.length} results</p>
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <label className="relative flex-1 sm:flex-none">
@@ -116,7 +115,7 @@ export default function ProductsPage() {
         <div className="flex flex-col md:flex-row gap-8">
           
           {/* Sidebar Filters */}
-          <div className="hidden md:block w-72 flex-shrink-0">
+          <div className="hidden md:block w-72 flex-shrink-0 mt-5">
             <div className="glass-card bg-white sticky top-24 p-6">
               <div className="flex items-center gap-2 font-bold text-lg mb-6 pb-4 border-b border-[var(--border-color)]">
                 <SlidersHorizontal size={20} /> Filters
@@ -174,7 +173,7 @@ export default function ProductsPage() {
           </div>
 
           {/* Product Grid */}
-          <div className="flex-1">
+          <div className="flex-1 mt-5">
             {loading ? (
               <div className="flex justify-center items-center h-64 bg-white rounded-2xl border border-[var(--border-color)]">
                 <div className="loader"></div>
