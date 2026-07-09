@@ -90,13 +90,13 @@ export default function ProductsPage() {
         <div className="container py-8 md:py-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">All Products</h1>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <p className="text-muted">Showing {products.length} results</p>
-            <div className="flex gap-3 w-full sm:w-auto">
+            <p className="text-muted m-0">Showing {products.length} results</p>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               <label className="relative flex-1 sm:flex-none">
                 <select
                   value={activeSort}
                   onChange={(event) => updateFilters({ sort: event.target.value === 'newest' ? null : event.target.value })}
-                  className="appearance-none w-full px-4 py-2 pr-9 bg-white border border-[var(--border-color)] rounded-lg text-sm font-medium outline-none"
+                  className="appearance-none w-full h-11 px-4 pr-9 bg-white border border-[var(--border-color)] rounded-lg text-sm font-medium outline-none"
                 >
                   <option value="newest">Sort by: Newest</option>
                   <option value="price-low">Price: Low to High</option>
@@ -104,7 +104,7 @@ export default function ProductsPage() {
                 </select>
                 <ChevronDown size={16} className="text-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </label>
-              <button className="md:hidden flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-surface-hover)] border border-[var(--border-color)] rounded-lg text-sm font-medium">
+              <button className="md:hidden h-11 flex items-center justify-center gap-2 px-4 bg-[var(--bg-surface-hover)] border border-[var(--border-color)] rounded-lg text-sm font-medium whitespace-nowrap">
                 <SlidersHorizontal size={16} /> Filters
               </button>
             </div>
@@ -116,34 +116,34 @@ export default function ProductsPage() {
         <div className="flex flex-col md:flex-row gap-8">
           
           {/* Sidebar Filters */}
-          <div className="hidden md:block w-64 flex-shrink-0">
+          <div className="hidden md:block w-72 flex-shrink-0">
             <div className="glass-card bg-white sticky top-24 p-6">
               <div className="flex items-center gap-2 font-bold text-lg mb-6 pb-4 border-b border-[var(--border-color)]">
                 <SlidersHorizontal size={20} /> Filters
               </div>
               
               <div className="mb-8">
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Categories</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider !mb-4">Categories</h3>
                 <div className="flex flex-col gap-3">
                   {categories.map(cat => (
-                    <label key={cat} className="flex items-center gap-3 cursor-pointer group">
+                    <label key={cat} className="grid grid-cols-[16px_1fr] items-center gap-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={activeCategory === cat}
                         onChange={(event) => updateFilters({ category: event.target.checked ? cat : null })}
-                        className="w-4 h-4 rounded border-gray-300 text-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                        className="!w-4 !h-4 !p-0 rounded border-gray-300 text-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                       />
-                      <span className="text-sm text-[var(--text-main)] group-hover:text-[var(--primary-color)] transition-colors">{cat}</span>
+                      <span className="text-sm leading-5 text-[var(--text-main)] group-hover:text-[var(--primary-color)] transition-colors">{cat}</span>
                     </label>
                   ))}
                   {categories.length === 0 && (
-                    <p className="text-sm text-muted">No categories yet.</p>
+                    <p className="text-sm text-muted m-0">No categories yet.</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Price Range</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider !mb-4">Price Range</h3>
                 <div className="flex gap-2 items-center">
                   <input
                     type="number"
@@ -151,7 +151,7 @@ export default function ProductsPage() {
                     value={minPrice}
                     onChange={(event) => setMinPrice(event.target.value)}
                     placeholder="Min"
-                    className="w-full text-sm py-2 px-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-md"
+                    className="h-11 w-full text-sm px-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-md"
                   />
                   <span className="text-muted">-</span>
                   <input
@@ -160,10 +160,10 @@ export default function ProductsPage() {
                     value={maxPrice}
                     onChange={(event) => setMaxPrice(event.target.value)}
                     placeholder="Max"
-                    className="w-full text-sm py-2 px-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-md"
+                    className="h-11 w-full text-sm px-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-md"
                   />
                 </div>
-                <button onClick={applyPriceFilter} className="w-full mt-4 btn btn-secondary text-sm py-2">Apply</button>
+                <button onClick={applyPriceFilter} className="w-full mt-4 btn btn-secondary text-sm h-11">Apply</button>
                 {hasFilters && (
                   <button onClick={clearFilters} className="w-full mt-3 text-sm font-semibold text-[var(--primary-color)] hover:underline">
                     Clear Filters
