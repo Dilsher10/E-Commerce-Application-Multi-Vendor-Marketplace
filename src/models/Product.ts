@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import './User';
 
 export interface IProduct extends Document {
   vendor: mongoose.Types.ObjectId;
