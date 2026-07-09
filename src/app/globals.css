@@ -305,3 +305,39 @@ main {
 .promoCard p {
   color: #fff;
 }
+
+.reviews h2 {
+  color: #fff;
+}
+
+.reviews h4 {
+  color: #fff;
+}
+
+.reviews p {
+  color: #fff;
+}
+
+.download {
+  background: #0f172a;
+}
+
+.download h2 {
+  color: #fff;
+}
+
+.download h4 {
+  color: #fff;
+}
+
+.download p {
+  color: #fff;
+}
+
+.download .text-left {
+  color: #fff;
+}
+
+.absolute.inset-0.bg-gradient-to-r.from-\[var\(--primary-color\)\].via-\[var\(--primary-color\)\].to-transparent.opacity-90 {
+  background: #0f172a;
+}

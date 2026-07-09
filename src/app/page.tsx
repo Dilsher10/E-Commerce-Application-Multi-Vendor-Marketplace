@@ -136,7 +136,7 @@ export default async function Home() {
   return (
     <div className="animate-fade-in bg-[var(--bg-color)] flex flex-col gap-8 md:gap-16 pb-16">
       {/* Modern Bento Box Hero Section */}
-      <section className="pt-10 pb-20">
+      <section className="pt-10">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[540px]">
             
@@ -286,7 +286,7 @@ export default async function Home() {
       )}
 
       {/* Customer Reviews */}
-      <section className="py-20 bg-[var(--secondary-color)] text-white overflow-hidden shadow-2xl">
+      <section className="reviews py-20 bg-[var(--secondary-color)] text-white overflow-hidden shadow-2xl">
         <div className="container relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-bold mb-4 text-white">What Our Customers Say</h2>
@@ -318,50 +318,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      {/* App Download CTA */}
-      <section className="py-0 relative overflow-hidden rounded-3xl bg-[var(--primary-color)] mx-4 md:mx-12 my-12 shadow-2xl">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-color)] via-[var(--primary-color)] to-transparent opacity-90"></div>
-        <div className="container relative z-10 py-16 md:py-24 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="max-w-xl text-white">
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white leading-tight">Shop Faster With The Lumina App.</h2>
-            <p className="text-blue-100 text-lg mb-8">Get exclusive app-only discounts, real-time tracking, and early access to drops. Available on iOS and Android.</p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-black text-white px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-gray-800 transition-colors">
-                <Smartphone size={24} />
-                <div className="text-left">
-                  <div className="text-[10px] uppercase font-semibold text-gray-400">Download on the</div>
-                  <div className="text-sm leading-tight">App Store</div>
-                </div>
-              </button>
-              <button className="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-gray-100 transition-colors">
-                <Smartphone size={24} />
-                <div className="text-left">
-                  <div className="text-[10px] uppercase font-semibold text-gray-500">GET IT ON</div>
-                  <div className="text-sm leading-tight">Google Play</div>
-                </div>
-              </button>
-            </div>
-          </div>
-          <div className="hidden lg:block relative w-64 h-[400px]">
-            {/* Abstract mock phone visual */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-[500px] bg-white rounded-[3rem] border-8 border-gray-900 shadow-2xl overflow-hidden transform rotate-12">
-              <div className="w-full h-full bg-gray-100 relative">
-                <div className="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-2xl w-1/2 mx-auto"></div>
-                <div className="p-4 pt-10">
-                  <div className="h-32 bg-blue-100 rounded-xl mb-4"></div>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="h-24 bg-gray-200 rounded-xl"></div>
-                    <div className="h-24 bg-gray-200 rounded-xl"></div>
-                  </div>
-                  <div className="h-10 bg-[var(--primary-color)] rounded-full mb-4 w-3/4"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+     
 
       {/* Trust Badges */}
       <section className="py-16 bg-white border border-[var(--border-color)]">
